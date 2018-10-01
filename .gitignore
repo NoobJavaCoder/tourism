@@ -1,3 +1,6 @@
+src/main/java/com/keendo/MyTestController.java
+logs/*
+
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
