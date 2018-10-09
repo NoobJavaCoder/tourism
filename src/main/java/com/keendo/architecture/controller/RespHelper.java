@@ -47,8 +47,8 @@ public class RespHelper {
     public static RespBase nologin() {
 
         RespBase resp = new RespBase(RetCode.NO_LOGIN);
-//        resp.setRetMsg(Msg.text("common.user.nologin"));
-        resp.setRetMsg("common user nologin");
+//        resp.setRetMsg(Msg.text("common.adminuser.nologin"));
+        resp.setRetMsg("common adminuser nologin");
         return resp;
     }
 
