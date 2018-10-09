@@ -24,12 +24,12 @@ public class RetCode {
     static {
         /*codeMsgMap.put(SUCCESS, Msg.text("common.api.success"));
         codeMsgMap.put(FAILED, Msg.text("common.api.failed"));
-        codeMsgMap.put(NO_LOGIN, Msg.text("common.user.nologin"));
-        codeMsgMap.put(AUTH_FAILED, Msg.text("common.user.authfailed"));*/
+        codeMsgMap.put(NO_LOGIN, Msg.text("common.adminuser.nologin"));
+        codeMsgMap.put(AUTH_FAILED, Msg.text("common.adminuser.authfailed"));*/
         codeMsgMap.put(SUCCESS,"操作成功！");
         codeMsgMap.put(FAILED, "操作失败！");
-        codeMsgMap.put(NO_LOGIN, "user nologin");
-        codeMsgMap.put(AUTH_FAILED, "user authfailed");
+        codeMsgMap.put(NO_LOGIN, "adminuser nologin");
+        codeMsgMap.put(AUTH_FAILED, "adminuser authfailed");
     }
 
 }

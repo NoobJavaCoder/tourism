@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BaseController {
 
-
     public static final String HEADER_TOKEN_STR = "token";
 
     @Autowired
