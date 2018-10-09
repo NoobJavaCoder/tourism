@@ -3,7 +3,6 @@ package com.keendo.biz.service;
 import com.keendo.biz.mapper.TourProductMapper;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.bean.tourproduct.AddTourProduct;
-import com.keendo.biz.service.bean.tourproduct.UpdateTourProduct;
 import com.keendo.biz.service.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
