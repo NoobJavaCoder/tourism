@@ -6,7 +6,16 @@ public class SessionToken {
     private Integer id;
     private String token;
     private Integer userId;
+    private String openId;
     private Date createTime;
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
 
     public Integer getId() {
         return id;

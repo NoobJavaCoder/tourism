@@ -20,7 +20,6 @@ public class CacheSessionService {
     public void setUserId(String token, Integer userId) {
         SessionToken sessionToken = new SessionToken();
         sessionToken.setUserId(userId);
-        sessionToken.setToken(token);
         sessionToken.setCreateTime(new Date());
 
         cache.put(token, sessionToken);
@@ -46,6 +45,5 @@ public class CacheSessionService {
 
         return userId;
     }
-
 
 }

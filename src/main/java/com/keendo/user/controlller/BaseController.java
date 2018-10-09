@@ -37,9 +37,6 @@ public class BaseController {
         return userId;
     }
 
-    protected void saveUserId(Integer userId, String token) {
-        cacheSessionService.setUserId(token, userId);
-    }
 
 
 }

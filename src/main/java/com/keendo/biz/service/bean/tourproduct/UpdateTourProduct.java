@@ -1,9 +1,10 @@
-package com.keendo.biz.model;
+package com.keendo.biz.service.bean.tourproduct;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class TourProduct {
+public class UpdateTourProduct {
+
     private Integer id;
     private String title;
     private String coverImgUrl;
@@ -14,14 +15,13 @@ public class TourProduct {
     private Date deadline;
     private Integer maxParticipantNum;
     private String wxPubUrl;
-    private Date createTime;
 
-    public Date getCreateTime() {
-        return createTime;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -30,14 +30,6 @@ public class TourProduct {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getCoverImgUrl() {
