@@ -2,6 +2,7 @@ package com.keendo.biz.controller.admin;
 
 import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
+import com.keendo.biz.controller.admin.utils.AdminLoginUtils;
 import com.keendo.biz.controller.base.bean.IdReq;
 import com.keendo.biz.controller.base.bean.PageParamReq;
 import com.keendo.biz.model.TourProduct;
@@ -28,6 +29,10 @@ public class AdminTourProductController {
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public RespBase getAuctionItemPage(@RequestBody PageParamReq pageParamReq){
+        Boolean login = AdminLoginUtils.isLogin();
+        if(!login){
+            return RespHelper.nologin();
+        }
 
         Integer startIndex = pageParamReq.getStartIndex();
         Integer pageSize = pageParamReq.getPageSize();
@@ -43,6 +48,11 @@ public class AdminTourProductController {
     @ResponseBody
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     public RespBase get(@RequestBody IdReq idReq){
+        Boolean login = AdminLoginUtils.isLogin();
+        if(!login){
+            return RespHelper.nologin();
+        }
+
         Integer id = idReq.getId();
         TourProduct tp = tourProductService.getById(id);
         return RespHelper.ok(tp);
@@ -52,6 +62,10 @@ public class AdminTourProductController {
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RespBase add(@RequestBody AddTourProduct addTourProduct){
+        Boolean login = AdminLoginUtils.isLogin();
+        if(!login){
+            return RespHelper.nologin();
+        }
 
         tourProductService.add(addTourProduct);
         return RespHelper.ok();
@@ -61,6 +75,10 @@ public class AdminTourProductController {
     @ResponseBody
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public RespBase update(@RequestBody TourProduct tourProduct){
+        Boolean login = AdminLoginUtils.isLogin();
+        if(!login){
+            return RespHelper.nologin();
+        }
 
         tourProductService.update(tourProduct);
         return RespHelper.ok();
@@ -69,6 +87,11 @@ public class AdminTourProductController {
     @ResponseBody
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public RespBase deleteById(@RequestBody IdReq idReq){
+        Boolean login = AdminLoginUtils.isLogin();
+        if(!login){
+            return RespHelper.nologin();
+        }
+
         Integer id = idReq.getId();
         tourProductService.deleteById(id);
         return RespHelper.ok();

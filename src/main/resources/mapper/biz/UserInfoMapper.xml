@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keendo.biz.mapper.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.keendo.biz.model.UserInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="phone_no" property="phoneNo" jdbcType="VARCHAR" />
+    <result column="id_card_no" property="idCardNo" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+     `id`, `user_id`, `sex`, `real_name`, `phone_no`, `id_card_no`, `nickname`
+  </sql>
+
+
+  <insert id="insert" >
+    insert into e_user_info
+    (`user_id`, `sex`, `real_name`, `phone_no`, `id_card_no`, `nickname`)
+    values
+    (#{userId},#{sex},#{realName},#{phoneNo},#{idCardNo},#{nickname})
+  </insert>
+
+
+  <select id="selectById" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>  from e_user_info where id = #{id}
+  </select>
+
+  <select id="selectByUserId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>  from e_user_info where user_id = #{userId}
+  </select>
+
+  <select id="selectByRealName" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from e_user_info where real_name like concat('%',#{keyword},'%')
+  </select>
+
+
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_user_info
+    order by real_name ASC
+    limit #{startIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+  </select>
+  
+  <select id="count" resultType="java.lang.Integer">
+    select 
+    count(id)
+    from e_user_info
+  </select>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.keendo.biz.model.TourProduct" >
+    update e_tour_product
+    set
+      title = #{title},
+      tour_summary = #{tourSummary},
+      cover_img_url = #{coverImgUrl},
+      departure_time = #{departureTime},
+      deadline = #{deadline},
+      tour_day = #{tourDay},
+      price = #{price},
+      max_participant_num = #{maxParticipantNum},
+      wx_pub_url = #{wxPubUrl}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from e_tour_product
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+</mapper>

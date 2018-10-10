@@ -22,7 +22,7 @@
     </select>
 
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into e_user (`nickname` ,`head_img_url`,`support_count`,`open_id`,`sex`,`city`,`province`,`country`,`create_time`)
+        insert into e_user (`nickname` ,`head_img_url`,`open_id`,`sex`,`city`,`province`,`country`,`create_time`)
         values
         (#{nickname},#{headImgUrl},#{supportCount},#{openId},#{sex},#{city},#{province},#{country},#{createTime})
     </insert>
@@ -36,7 +36,6 @@
         city = #{city},
         province = #{province},
         country = #{country},
-        create_time = #{createTime}
         where id = #{id}
     </update>
 

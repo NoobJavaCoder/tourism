@@ -16,6 +16,7 @@ public class User {
     private String country;
     private Date createTime;
 
+
     public String getHeadImgUrl() {
         return headImgUrl;
     }
