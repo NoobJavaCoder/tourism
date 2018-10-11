@@ -43,13 +43,19 @@ public class Signature {
         return result;
     }
 
-    public static String getSign(Map<String,Object> map){
-        ArrayList<String> list = new ArrayList<String>();
-        for(Map.Entry<String,Object> entry:map.entrySet()){
-            if(entry.getValue()!=""){
-                list.add(entry.getKey() + "=" + entry.getValue() + "&");
+    public static String getSign(Map map){
+        ArrayList<String> list = new ArrayList<>();
+        for(Object key:map.keySet()){
+            Object v = map.get(key);
+            if(null != v && !"".equals(v) && !"sign".equals(key)){
+                list.add(key + "=" + map.get(key) + "&");
             }
         }
+//        for(Map.Entry<String,String> entry:map.entrySet()){
+//            if(entry.getValue()!=""){
+//                list.add(entry.getKey() + "=" + entry.getValue() + "&");
+//            }
+//        }
         int size = list.size();
         String [] arrayToSort = list.toArray(new String[size]);
         Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);

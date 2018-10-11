@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.InetAddress;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -25,6 +26,43 @@ public class WXPayUtil {
      */
     public static String getSign(Object o) throws Exception {
         return Signature.getSign(o);
+    }
+
+    public static String getSign(String xmlRet) throws Exception {
+        Map map = XmlBeanUtil.doXMLParse(xmlRet);
+        String sign = Signature.getSign(map);
+        return sign;
+    }
+
+    /**
+     * 验证签名
+     *
+     * @param xmlRet
+     * @return
+     * @throws Exception
+     */
+    public static boolean checkSign(String xmlRet) throws Exception {
+        String geneSign = getSign(xmlRet);
+        String signFromXml = getSignFromXml(xmlRet);
+        return geneSign.equals(signFromXml);
+    }
+
+    private static String getSignFromXml(String xmlRet) throws Exception {
+        Map map = XmlBeanUtil.doXMLParse(xmlRet);
+        String sign = (String) map.get("sign");
+        return sign;
+    }
+
+    /**
+     * 从支付回调信息中获取resultCode
+     * @param xmlRet
+     * @return
+     * @throws Exception
+     */
+    public static String getResultCode(String xmlRet) throws Exception {
+        Map map = XmlBeanUtil.doXMLParse(xmlRet);
+        String resultCode = (String) map.get("result_code");
+        return resultCode;
     }
 
     /**
@@ -55,6 +93,7 @@ public class WXPayUtil {
 
     /**
      * 生成系统订单号
+     *
      * @return
      */
     public static String createOrderSn() {
@@ -64,6 +103,7 @@ public class WXPayUtil {
     /**
      * 用于回调
      * 读请求数据
+     *
      * @param request
      * @return
      * @throws Exception
@@ -77,6 +117,7 @@ public class WXPayUtil {
     /**
      * 用于回调响应数据
      * 写数据
+     *
      * @param response
      * @param xmlStr
      * @throws Exception

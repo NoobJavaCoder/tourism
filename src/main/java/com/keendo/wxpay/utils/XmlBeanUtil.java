@@ -8,10 +8,17 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class XmlBeanUtil {
     /**
@@ -147,59 +154,102 @@ public class XmlBeanUtil {
         return t;
     }
 
-    public static void main(String[]args){
-//        String xml = "<xml>\n" +
-//                "\n" +
-//                "<return_code><![CDATA[SUCCESS]]></return_code>\n" +
-//                "\n" +
-//                "<return_msg><![CDATA[]]></return_msg>\n" +
-//                "\n" +
-//                "<mch_appid><![CDATA[wxec38b8ff840bd989]]></mch_appid>\n" +
-//                "\n" +
-//                "<mchid><![CDATA[10013274]]></mchid>\n" +
-//                "\n" +
-//                "<device_info><![CDATA[]]></device_info>\n" +
-//                "\n" +
-//                "<nonce_str><![CDATA[lxuDzMnRjpcXzxLx0q]]></nonce_str>\n" +
-//                "\n" +
-//                "<result_code><![CDATA[SUCCESS]]></result_code>\n" +
-//                "\n" +
-//                "<partner_trade_no><![CDATA[10013574201505191526582441]]></partner_trade_no>\n" +
-//                "\n" +
-//                "<payment_no><![CDATA[1000018301201505190181489473]]></payment_no>\n" +
-//                "\n" +
-//                "<payment_time><![CDATA[2015-05-19 15：26：59]]></payment_time>\n" +
-//                "\n" +
-//                "</xml>";
+    /**
+     * 解析xml,返回第一级元素键值对。如果第一级元素有子节点，则此节点的值是子节点的xml数据。
+     * @param strxml
+     * @return
+     * @throws JDOMException
+     * @throws IOException
+     */
+    public static Map doXMLParse(String strxml) throws JDOMException, IOException {
+        strxml = strxml.replaceFirst("encoding=\".*\"", "encoding=\"UTF-8\"");
+
+        if(null == strxml || "".equals(strxml)) {
+            return null;
+        }
+        Map m = new HashMap();
+        InputStream in = new ByteArrayInputStream(strxml.getBytes("UTF-8"));
+        SAXBuilder builder = new SAXBuilder();
+        Document doc = builder.build(in);
+        Element root = doc.getRootElement();
+        List list = root.getChildren();
+        Iterator it = list.iterator();
+        while(it.hasNext()) {
+            Element e = (Element) it.next();
+            String k = e.getName();
+            String v = "";
+            List children = e.getChildren();
+            if(children.isEmpty()) {
+                v = e.getTextNormalize();
+            } else {
+                v = getChildrenText(children);
+            }
+            m.put(k, v);
+        }
+
+        //关闭流
+        in.close();
+
+        return m;
+    }
+
+    /**
+     * 获取子结点的xml
+     * @param children
+     * @return String
+     */
+    public static String getChildrenText(List children) {
+        StringBuffer sb = new StringBuffer();
+        if(!children.isEmpty()) {
+            Iterator it = children.iterator();
+            while(it.hasNext()) {
+                Element e = (Element) it.next();
+                String name = e.getName();
+                String value = e.getTextNormalize();
+                List list = e.getChildren();
+                sb.append("<" + name + ">");
+                if(!list.isEmpty()) {
+                    sb.append(getChildrenText(list));
+                }
+                sb.append(value);
+                sb.append("</" + name + ">");
+            }
+        }
+        return sb.toString();
+    }
+
+
+
+
+
+
+    public static void main(String[]args)throws Exception{
         String xml = "<xml>\n" +
-                "\n" +
-                "<return_code><![CDATA[FAIL]]></return_code>\n" +
-                "\n" +
-                "<return_msg><![CDATA[系统繁忙,请稍后再试.]]></return_msg>\n" +
-                "\n" +
-                "<result_code><![CDATA[FAIL]]></result_code>\n" +
-                "\n" +
-                "<err_code><![CDATA[SYSTEMERROR]]></err_code>\n" +
-                "\n" +
-                "<err_code_des><![CDATA[系统繁忙,请稍后再试.]]></err_code_des>\n" +
-                "\n" +
+                "  <appid><![CDATA[wx2421b1c4370ec43b]]></appid>\n" +
+                "  <attach><![CDATA[支付测试]]></attach>\n" +
+                "  <bank_type><![CDATA[CFT]]></bank_type>\n" +
+                "  <fee_type><![CDATA[CNY]]></fee_type>\n" +
+                "  <is_subscribe><![CDATA[Y]]></is_subscribe>\n" +
+                "  <mch_id><![CDATA[10000100]]></mch_id>\n" +
+                "  <nonce_str><![CDATA[5d2b6c2a8db53831f7eda20af46e531c]]></nonce_str>\n" +
+                "  <openid><![CDATA[oUpF8uMEb4qRXf22hE3X68TekukE]]></openid>\n" +
+                "  <out_trade_no><![CDATA[1409811653]]></out_trade_no>\n" +
+                "  <result_code><![CDATA[SUCCESS]]></result_code>\n" +
+                "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
+                "  <sign><![CDATA[B552ED6B279343CB493C5DD0D78AB241]]></sign>\n" +
+                "  <sub_mch_id><![CDATA[10000100]]></sub_mch_id>\n" +
+                "  <time_end><![CDATA[20140903131540]]></time_end>\n" +
+                "  <total_fee>1</total_fee>\n" +
+                "<coupon_fee><![CDATA[10]]></coupon_fee>\n" +
+                "<coupon_count><![CDATA[1]]></coupon_count>\n" +
+                "<coupon_type><![CDATA[CASH]]></coupon_type>\n" +
+                "<coupon_id><![CDATA[10000]]></coupon_id>\n" +
+                "<coupon_fee><![CDATA[100]]></coupon_fee>\n" +
+                "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
+                "  <transaction_id><![CDATA[1004400740201409030005092168]]></transaction_id>\n" +
                 "</xml>";
-        //TransfersResult transfersRet = XmlBeanUtil.toBeanWithCData(xml,TransfersResult.class);
-        //System.out.println(transfersRet);
+        String sign = WXPayUtil.getSign(xml);
 
-//        Transfers tf = new Transfers();
-//        tf.setMchAppid("wxe062425f740c30d8");
-//        tf.setMchid("10000098");
-//        tf.setNonceStr("3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS");
-//        tf.setAmount(100);
-//        tf.setPartnerTradeNo("100000982014120919616");
-//        tf.setCheckName("FORCE_CHECK");
-//        tf.setSign("C97BDBACF37622775366F38B629F45E3");
-//        tf.setSpbillCreateIp("10.2.3.10");
-//        tf.setDesc("节日快乐");
-//
-//        String s = XmlBeanUtil.toXml(tf);
-//        System.out.println(s);
-
+        System.out.println(sign);
     }
 }

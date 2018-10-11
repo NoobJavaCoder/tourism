@@ -7,6 +7,7 @@ import com.keendo.biz.service.bean.userinfo.AdminUserInfo;
 import com.keendo.biz.service.utils.BeanUtils;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
+import com.keendo.user.service.utils.VerifyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,16 @@ public class UserInfoService {
      * @param userInfo
      */
     public void saveUserInfo(UserInfo userInfo){
-        //TODO:校验手机号,身份证号,姓名
+        //TODO:校验手机号,身份证号,
+        String realName = userInfo.getRealName();
+        if(!VerifyUtil.isRealName(realName)){
+            throw new BizException("请填写真实姓名");
+        }
+
+        String phoneNo = userInfo.getPhoneNo();
+        if(!VerifyUtil.isPhone(phoneNo)){
+
+        }
 
         Integer userId = userInfo.getUserId();
         User user = userService.getById(userId);

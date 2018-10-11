@@ -1,4 +1,5 @@
 package com.keendo.wxpay.service;
+
 import com.keendo.wxpay.mapper.PayRecordMapper;
 import com.keendo.wxpay.model.PayRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,11 @@ public class PayRecordService {
 
     /**
      * 根据系统订单号获取支付记录
+     *
      * @param orderSn
      * @return
      */
-    public PayRecord getByOrderSn(String orderSn){
+    public PayRecord getByOrderSn(String orderSn) {
         return payRecordMapper.selectByOrderSn(orderSn);
     }
 
@@ -35,11 +37,22 @@ public class PayRecordService {
         payRecordMapper.insert(payRecord);
     }
 
-    public void update(PayRecord payRecord){
+    public void update(PayRecord payRecord) {
         payRecordMapper.update(payRecord);
     }
 
-
+    /**
+     * 支付成功操作
+     *
+     * @param orderSn:订单号
+     * @param transactionId:微信第三方支付流水号
+     */
+    public void success(String orderSn, String transactionId) {
+        PayRecord payRecord = getByOrderSn(orderSn);
+        payRecord.setTransactionId(transactionId);
+        payRecord.setStatus(Constant.SUCCESS_PAY);
+        this.update(payRecord);
+    }
 
     public static class Constant {
         private static final Integer NOT_PAY = 0;//待付款
