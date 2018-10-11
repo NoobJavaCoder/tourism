@@ -47,7 +47,6 @@ public class WXPayKitService {
 
             return uoResp;
         } else {
-
             Log.e("unifiedOrder request fail , response = {?} ", response);
             throw new BizException("系统繁忙,请稍后再试");
         }

@@ -28,4 +28,5 @@ public class PageParamReq {
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
+
 }

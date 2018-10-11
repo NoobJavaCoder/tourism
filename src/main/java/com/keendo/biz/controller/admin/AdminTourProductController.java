@@ -25,7 +25,6 @@ public class AdminTourProductController {
     @Autowired
     private TourProductService tourProductService;
 
-
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public RespBase getAuctionItemPage(@RequestBody PageParamReq pageParamReq){
