@@ -1,6 +1,9 @@
 package com.keendo.wxpay.controller;
 
+import com.keendo.wxpay.bean.WXNotifyResp;
 import com.keendo.wxpay.service.WXPayKitService;
+import com.keendo.wxpay.utils.WXPayUtil;
+import com.keendo.wxpay.utils.XmlBeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +22,14 @@ public class WXNotifyController {
 
     @RequestMapping(value = "/callback", method = RequestMethod.POST)
     public void callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        wxPayKitService.callback(request,response);
+
+        String xmlRet = WXPayUtil.readXml(request);
+
+        WXNotifyResp resp = wxPayKitService.callback(xmlRet);
+
+        String respXml = XmlBeanUtil.toXmlWithCData(resp);
+
+        WXPayUtil.writeXml(response, respXml);
     }
 
 
