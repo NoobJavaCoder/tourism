@@ -5,7 +5,7 @@ import com.keendo.architecture.exception.BizException;
 import com.keendo.architecture.utils.Log;
 import com.keendo.user.service.helper.MiniAppHelper;
 import com.keendo.user.service.helper.bean.LoginVerifyInfo;
-import com.keendo.user.service.utils.CommonUtils;
+import com.keendo.user.service.utils.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,7 @@ public class MiniAppLoginService {
 
         String sessionKey = loginVerifyInfo.getSessionKey();
 
-        String token = CommonUtils.randomUUID();
+        String token = RandomUtils.randomUUID();
 
         Log.i("==> mini login : openid = {?} , session_key = {?} , token = {?} ", openId, sessionKey, token);
 

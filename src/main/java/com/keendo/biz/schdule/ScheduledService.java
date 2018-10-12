@@ -3,13 +3,12 @@ package com.keendo.biz.schdule;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.TourProductService;
-import com.keendo.biz.service.utils.CommonUtils;
 import com.keendo.biz.service.utils.ListUtil;
+import com.keendo.biz.service.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -44,11 +43,11 @@ public class ScheduledService {
 
                 Integer id = tp.getId();//产品id
 
-                Date departureTime = CommonUtils.dateStartTime(tp.getDepartureTime());//产品时间
+                Date departureTime = TimeUtils.dateStartTime(tp.getDepartureTime());//产品时间
 
                 Integer tourDay = tp.getTourDay();//旅行天数
 
-                Date endTime = CommonUtils.dateOffset(departureTime, tourDay);//结束时间
+                Date endTime = TimeUtils.dateOffset(departureTime, tourDay);//结束时间
 
                 Date now = new Date();//当前时间
 

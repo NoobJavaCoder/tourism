@@ -1,7 +1,7 @@
 package com.keendo.user.service;
 
 import com.keendo.user.model.SessionToken;
-import com.keendo.user.service.utils.CommonUtils;
+import com.keendo.user.service.utils.TimeUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -34,7 +34,7 @@ public class CacheSessionService {
         }
 
         Date createTime = sessionToken.getCreateTime();
-        Date validEndTime = CommonUtils.hourOffset(createTime, Constant.SESSION_VALID_TIME);
+        Date validEndTime = TimeUtils.hourOffset(createTime, Constant.SESSION_VALID_TIME);
         //失效
         if (validEndTime.compareTo(new Date()) <= 0) {
             cache.remove(token);
