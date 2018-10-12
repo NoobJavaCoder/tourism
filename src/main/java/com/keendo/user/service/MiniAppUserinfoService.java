@@ -9,8 +9,8 @@ import com.keendo.user.service.helper.MiniAppHelper;
 import com.keendo.user.service.helper.bean.LoginVerifyInfo;
 import com.keendo.user.service.utils.AesCbcUtil;
 import com.keendo.user.service.utils.BeanUtil;
-import com.keendo.user.service.utils.CommonUtils;
 import com.keendo.user.service.utils.JsonUtil;
+import com.keendo.user.service.utils.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +41,7 @@ public class MiniAppUserinfoService {
         String code = encryptedUserinfo.getCode();
         LoginVerifyInfo loginVerifyInfo = miniAppHelper.fetchLoginVerifyInfo(code);
         String sessionKey = loginVerifyInfo.getSessionKey();
-        String token = CommonUtils.randomUUID();
+        String token = RandomUtils.randomUUID();
 
 
         //userInfo

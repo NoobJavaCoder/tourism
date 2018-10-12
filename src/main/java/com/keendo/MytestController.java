@@ -3,13 +3,10 @@ package com.keendo;
 import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
 import com.keendo.biz.service.SMSService;
-import com.keendo.user.service.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
 
 @RequestMapping("/test")
 @RestController
@@ -26,9 +23,4 @@ public class MytestController {
     }
 
 
-    public static void main(String[]args){
-        Date departureTime = CommonUtils.dateOffset(new Date(), 7);
-        long timeStamp = departureTime.getTime();
-        System.out.println(timeStamp);
-    }
 }
