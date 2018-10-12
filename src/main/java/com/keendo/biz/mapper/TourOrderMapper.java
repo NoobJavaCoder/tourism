@@ -11,11 +11,13 @@ import java.util.List;
 public interface TourOrderMapper {
     int insert(TourOrder tourOrder);
 
-    List<TourOrder> selectByTourProductId(@Param("tourProductId") Integer tourProductId ,@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize);
+    List<TourOrder> selectByTourProductId(@Param("tourProductId") Integer tourProductId, @Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
 
-    int updateState(@Param("orderId") Integer orderId ,@Param("fromState") Integer fromState ,@Param("toState") Integer toState);
+    int updateState(@Param("orderId") Integer orderId, @Param("fromState") Integer fromState, @Param("toState") Integer toState);
 
     TourOrder selectById(Integer id);
 
     int countByTourProductId(Integer tourProductId);
+
+    int countByTourProductIdAndState(@Param("tourProductId") Integer tourProductId, @Param("state") Integer state);
 }

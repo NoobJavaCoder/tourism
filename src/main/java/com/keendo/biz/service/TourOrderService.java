@@ -141,6 +141,14 @@ public class TourOrderService {
         return tourOrderMapper.countByTourProductId(tourProductId);
     }
 
+    public Integer countUnPaidByTourProductId(Integer tourProductId){
+        return tourOrderMapper.countByTourProductIdAndState(tourProductId,Constants.NOT_PAY_STATE);
+    }
+
+    public Integer countHasPaidByTourProductId(Integer tourProductId){
+        return tourOrderMapper.countByTourProductIdAndState(tourProductId,Constants.HAS_PAY_STATE);
+    }
+
     public TourOrder getById(Integer id){
         return tourOrderMapper.selectById(id);
     }

@@ -6,7 +6,10 @@ import com.keendo.wxpay.exception.BizException;
 import com.keendo.wxpay.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +24,9 @@ public class WXPayKitService {
 
     @Autowired
     private PayRecordService payRecordService;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     //查询订单url
     private static String QUERY_ORDER_URL = "https://api.mch.weixin.qq.com/pay/orderquery";
@@ -82,13 +88,13 @@ public class WXPayKitService {
 
     /**
      * 支付回调处理方法
-     * @param request
-     * @param response
+     *
+     * @param xmlRet
+     * @return
      * @throws Exception
      */
     @Transactional
-    public void callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String xmlRet = WXPayUtil.readXml(request);
+    public WXNotifyResp callback(String xmlRet) throws Exception {
 
         Boolean signValid = WXPayUtil.checkSign(xmlRet);
 
@@ -114,23 +120,30 @@ public class WXPayKitService {
 
             //订单不存在 || 订单已支付 || 金额不匹配
             if (!isOrderExist || isOrderPaid || !isValidFee) {
-                fail(response);
+                return WXNotifyResp.fail();
             }
 
             /*以下为支付成功操作,相同事务域*/
 
-            //修改订单状态
-            payResultService.orderSuccess(orderNo);
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-            //修改支付记录状态并记录第三方流水号
-            payRecordService.success(orderNo, thirdPartOrderNo);
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                    //修改订单状态
+                    payResultService.orderSuccess(orderNo);
 
-            //是否有必要把回调信息单独记录下来?
+                    //修改支付记录状态并记录第三方流水号
+                    payRecordService.success(orderNo, thirdPartOrderNo);
 
-            ok(response);
+                    //save callback info
+                }
+            });
+
+            return WXNotifyResp.ok();
 
         } else {
-            fail(response);
+
+            return WXNotifyResp.fail();
         }
     }
 

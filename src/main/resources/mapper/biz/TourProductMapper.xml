@@ -12,6 +12,7 @@
     <result column="max_participant_num" property="maxParticipantNum" jdbcType="INTEGER" />
     <result column="wx_pub_url" property="wxPubUrl" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
   </resultMap>
 
 
@@ -20,7 +21,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-     `id`, `title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`
+     `id`, `title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`state`
   </sql>
 
   <sql id="Blob_Column_List">
@@ -29,9 +30,9 @@
 
   <insert id="insert" parameterType="com.keendo.biz.model.TourProduct" >
     insert into e_tour_product
-    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`)
+    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`)
     values
-    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary})
+    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state})
   </insert>
 
 
@@ -65,7 +66,8 @@
       tour_day = #{tourDay},
       price = #{price},
       max_participant_num = #{maxParticipantNum},
-      wx_pub_url = #{wxPubUrl}
+      wx_pub_url = #{wxPubUrl},
+      state = #{state}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -73,5 +75,13 @@
     delete from e_tour_product
     where id = #{id,jdbcType=INTEGER}
   </delete>
+  
+  <select id="selectByState" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from e_tour_product where state = #{state}
+  </select>
 
+  <update id="updateStateById">
+    update e_tour_product set state = #{state} where id = #{id}
+  </update>
+          
 </mapper>
