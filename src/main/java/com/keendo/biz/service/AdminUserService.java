@@ -2,6 +2,8 @@ package com.keendo.biz.service;
 
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.mapper.AdminUserMapper;
+import com.keendo.biz.service.bean.adminuser.LoginAdminUser;
+
 import com.keendo.biz.model.AdminUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +44,25 @@ public class AdminUserService {
 
     public AdminUser getByAdminUser(String username){
         return adminUserMapper.selectByUsername(username);
+    }
+
+    /**
+     * 通过id获取
+     * @param adminUserId
+     * @return
+     */
+    public AdminUser getById(Integer adminUserId){
+        AdminUser adminUser = adminUserMapper.selectById(adminUserId);
+        return adminUser;
+    }
+
+    public LoginAdminUser getLoginAdminUser(Integer adminUserId){
+        AdminUser adminUser = getById(adminUserId);
+
+        LoginAdminUser loginAdminUser = new LoginAdminUser();
+        loginAdminUser.setUsername(adminUser.getUsername());
+        loginAdminUser.setAdminUserId(adminUserId);
+        return loginAdminUser;
+
     }
 }

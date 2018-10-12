@@ -49,6 +49,14 @@ public class AdminLoginUtils {
         httpSession.removeAttribute(ADMIN_USER_ATTTR);
     }
 
+    public static Integer getAdminUserId(){
+        HttpSession httpSession = getSession();
+
+        Integer adminUserId = (Integer) httpSession.getAttribute(ADMIN_USER_ATTTR);
+
+        return adminUserId;
+    }
+
     private static HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();

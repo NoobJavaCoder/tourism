@@ -24,4 +24,9 @@
         WHERE username = #{username}
     </select>
 
+    <select id="selectById" parameterType="map" resultMap="baseResultMap" >
+        SELECT <include refid="Base_Column_List"/>
+        FROM e_admin_user
+        WHERE id = #{id}
+    </select>
 </mapper>

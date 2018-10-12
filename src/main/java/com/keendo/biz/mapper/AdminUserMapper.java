@@ -9,4 +9,5 @@ public interface AdminUserMapper {
 
     AdminUser selectByUsername(String username);
 
+    AdminUser selectById(Integer id);
 }

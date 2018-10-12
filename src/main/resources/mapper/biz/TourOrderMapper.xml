@@ -69,4 +69,15 @@
         WHERE
             id = #{id}
     </select>
+    
+    <update id="updateByStateAndCreateTime" parameterType="map" >
+        UPDATE
+            e_tour_order
+        SET
+            state = #{toState}
+        WHERE
+            create_time &lt;= #{createTime}
+        AND
+            state = #{fromState}
+    </update>
 </mapper>

@@ -3,6 +3,7 @@ package com.keendo.biz.mapper;
 import com.keendo.biz.model.TourOrder;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,4 +21,6 @@ public interface TourOrderMapper {
     int countByTourProductId(Integer tourProductId);
 
     int countByTourProductIdAndState(@Param("tourProductId") Integer tourProductId, @Param("state") Integer state);
+
+    int updateByStateAndCreateTime(@Param("fromState") Integer fromState , @Param("toState") Integer toState  ,@Param("createTime") Date createTime );
 }

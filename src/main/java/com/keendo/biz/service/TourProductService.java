@@ -131,6 +131,19 @@ public class TourProductService {
         tourProductMapper.updateStateById(state, id);
     }
 
+    /**
+     * 修改为满员状态
+     * @param id
+     * @return
+     */
+    public Integer fullState(Integer id){
+        return this.updateStateByIdAndFromState(id, Constants.ON_GOING_STATE, Constants.FULL_STATE);
+    }
+
+    private Integer updateStateByIdAndFromState(Integer id ,Integer fromState ,Integer toState){
+        return tourProductMapper.updateStateByIdAndFromState(id, fromState, toState);
+    }
+
     public static class Constants {
         public final static Integer ON_GOING_STATE = 1;//进行中
         public final static Integer FINISH_STATE = 2;//旅游结束

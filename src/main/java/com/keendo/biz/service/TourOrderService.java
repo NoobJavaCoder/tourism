@@ -1,6 +1,7 @@
 package com.keendo.biz.service;
 
 import com.keendo.architecture.exception.BizException;
+import com.keendo.architecture.utils.Log;
 import com.keendo.biz.mapper.TourOrderMapper;
 import com.keendo.biz.model.TourOrder;
 import com.keendo.biz.model.TourOrderDetail;
@@ -40,6 +41,8 @@ public class TourOrderService {
     @Autowired
     private UserService userService;
 
+    //订单保留时间，超过则取消
+    private final static Long ORDER_RETENTION_TIME = 15 * 60 * 1000L;
 
     /**
      * 新增订单
@@ -54,8 +57,12 @@ public class TourOrderService {
 
             TourProduct tourProduct = tourProductService.getById(productId);
 
-            //TODO 检查产品状态
+            Integer state = tourProduct.getState();
+            if(!state.equals(TourProductService.Constants.ON_GOING_STATE)){
+                throw new BizException("该产品状态无法下单");
+            }
 
+            //TODO 检查自己是否已经下单
 
             //添加订单
             TourOrder tourOrder = new TourOrder();
@@ -74,6 +81,21 @@ public class TourOrderService {
             tourOrderDetail.setPrice(price);
 
             tourOrderDetailService.save(tourOrderDetail);
+
+            //检查是否满员
+            Integer hasPaidCount = countHasPaidByTourProductId(productId);
+            Integer unPaidCount = countUnPaidByTourProductId(productId);
+
+            Integer orderCount = hasPaidCount + unPaidCount;
+            Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
+            //如果满员则修改产品状态
+            if(maxParticipantNum.equals(orderCount)){
+                Integer fullStateResult = tourProductService.fullState(productId);
+
+                if(fullStateResult.equals(0)){
+                    throw new BizException("产品状态有误");
+                }
+            }
 
             return orderId;
         });
@@ -230,6 +252,22 @@ public class TourOrderService {
         }
 
         return false;
+    }
+
+    /**
+     * 取消未付款的订单
+     */
+    public void cancelUnPaidTourOrder(){
+        Long currentTimeMillis = System.currentTimeMillis();
+        Long time = currentTimeMillis - ORDER_RETENTION_TIME;
+
+        Date date = new Date(time);
+        updateByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.CANCEL_STATE, date);
+    }
+
+    public Integer updateByStateAndCreateTime(Integer fromState ,Integer toState ,Date createTime){
+        Log.i("cancel tourOrder that is unPaid.");
+        return tourOrderMapper.updateByStateAndCreateTime(fromState, toState, createTime);
     }
 
 

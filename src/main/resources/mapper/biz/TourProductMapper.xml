@@ -83,5 +83,8 @@
   <update id="updateStateById">
     update e_tour_product set state = #{state} where id = #{id}
   </update>
-          
+
+  <update id="updateStateByIdAndFromState" parameterType="map" >
+    update e_tour_product set state = #{fromState} where id = #{id} and state = #{toState}
+  </update>
 </mapper>

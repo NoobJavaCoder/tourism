@@ -6,6 +6,7 @@ import com.keendo.biz.controller.admin.bean.adminuser.AdminUserLoginVO;
 import com.keendo.biz.controller.admin.utils.AdminLoginUtils;
 import com.keendo.biz.model.AdminUser;
 import com.keendo.biz.service.AdminUserService;
+import com.keendo.biz.service.bean.adminuser.LoginAdminUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,4 +57,17 @@ public class AdminUserController {
         return RespHelper.ok();
     }
 
+    @RequestMapping(value = "/login-user/info", method = RequestMethod.POST)
+    public RespBase getLoginUserInfo() {
+
+        Integer adminUserId = AdminLoginUtils.getAdminUserId();
+
+        if(adminUserId == null){
+            return RespHelper.nologin();
+        }
+
+        LoginAdminUser loginAdminUser = adminUserService.getLoginAdminUser(adminUserId);
+
+        return RespHelper.ok(loginAdminUser);
+    }
 }

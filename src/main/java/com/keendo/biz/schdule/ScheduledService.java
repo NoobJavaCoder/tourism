@@ -1,6 +1,7 @@
 package com.keendo.biz.schdule;
 
 import com.keendo.biz.model.TourProduct;
+import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.TourProductService;
 import com.keendo.biz.service.utils.CommonUtils;
 import com.keendo.biz.service.utils.ListUtil;
@@ -20,6 +21,9 @@ public class ScheduledService {
 
     @Autowired
     private TourProductService tourProductService;
+
+    @Autowired
+    private TourOrderService tourOrderService;
 
     /**
      * 每分钟执行一次
@@ -55,6 +59,14 @@ public class ScheduledService {
                 }
             }
         }
+    }
+
+    /**
+     * 关闭未付款的订单
+     */
+    @Scheduled(cron = "0 0/1 * * * ? ")
+    public void closeUnPaidTourOrder(){
+        tourOrderService.cancelUnPaidTourOrder();
     }
 
 }
