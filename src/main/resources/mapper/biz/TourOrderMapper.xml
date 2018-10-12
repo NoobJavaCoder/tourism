@@ -56,7 +56,7 @@
         SET
         state = #{toState}
         WHERE
-        orderId = #{orderId}
+        id = #{orderId}
         AND
         state = #{fromState}
     </update>

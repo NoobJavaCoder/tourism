@@ -1,5 +1,6 @@
 package com.keendo.biz.service;
 
+import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.mapper.TourOrderMapper;
 import com.keendo.biz.model.TourOrder;
 import com.keendo.biz.model.TourOrderDetail;
@@ -174,6 +175,39 @@ public class TourOrderService {
         return tourOrderMapper.updateState(orderId ,fromState ,toState);
     }
 
+
+    /**
+     * 取消订单
+     * @param orderId
+     */
+    public void cancelOrder(Integer orderId ,Integer userId){
+
+        TourOrder tourOrder = getById(orderId);
+        if(tourOrder == null){
+            throw new BizException("找不到该订单");
+        }
+
+        Integer tourOrderUserId = tourOrder.getUserId();
+
+        if(!tourOrderUserId.equals(userId)){
+            throw new BizException("用户有误");
+        }
+
+        if (!tourOrder.getState().equals(Constants.NOT_PAY_STATE)) {
+            throw new BizException("未付款的订单才能取消");
+        }
+
+        Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.CANCEL_STATE);
+        if(updateResult == 0){
+            throw new BizException("取消订单失败");
+        }
+    }
+
+    /**
+     * 得到订单的花费
+     * @param orderId
+     * @return
+     */
     public BigDecimal getFeeByOrderId(Integer orderId){
         TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(orderId);
 
@@ -202,5 +236,6 @@ public class TourOrderService {
     private static class Constants{
         private final static Integer NOT_PAY_STATE = 0;
         private final static Integer HAS_PAY_STATE = 1;
+        private final static Integer CANCEL_STATE = 2;
     }
 }
