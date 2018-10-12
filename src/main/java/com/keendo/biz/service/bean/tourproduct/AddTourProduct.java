@@ -14,7 +14,6 @@ public class AddTourProduct {
     private Date deadline;
     private Integer maxParticipantNum;
     private String wxPubUrl;
-    private Date createTime = new Date();
 
     public String getTitle() {
         return title;
@@ -88,12 +87,5 @@ public class AddTourProduct {
         this.wxPubUrl = wxPubUrl;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 
 }

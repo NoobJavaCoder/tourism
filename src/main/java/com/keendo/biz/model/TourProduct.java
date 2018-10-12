@@ -15,6 +15,15 @@ public class TourProduct {
     private Integer maxParticipantNum;
     private String wxPubUrl;
     private Date createTime;
+    private Integer state;
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
     public Date getCreateTime() {
         return createTime;
