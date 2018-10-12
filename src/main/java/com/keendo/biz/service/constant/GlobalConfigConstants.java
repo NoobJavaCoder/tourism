@@ -14,6 +14,10 @@ public class GlobalConfigConstants {
     public final static String COS_BUCKET_NAME_SENSITIVE_KEY = "COS_BUCKET_NAME_SENSITIVE";
     public final static String COS_REGION_KEY = "COS_REGION";
 
+    //SMS
+    public final static String SMS_SIGN_KEY = "SMS_SIGN";//签名
+    public final static String SMS_TPL_ID_KEY = "SMS_TPL_ID";//模板id
+
 
 
     //商户appid
