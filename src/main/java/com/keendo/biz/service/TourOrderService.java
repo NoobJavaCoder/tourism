@@ -270,6 +270,14 @@ public class TourOrderService {
         return tourOrderMapper.updateByStateAndCreateTime(fromState, toState, createTime);
     }
 
+    /**
+     * 根据旅游产品id查询已经下订单的用户的id列表,limit 3人
+     * @param tourProductId:旅游产品id
+     * @return
+     */
+    public List<Integer> getOrderedUserIdList(Integer tourProductId){
+        return tourOrderMapper.selectOrderedUserIdList(tourProductId,Constants.NOT_PAY_STATE,Constants.HAS_PAY_STATE);
+    }
 
     private static class Constants{
         private final static Integer NOT_PAY_STATE = 0;

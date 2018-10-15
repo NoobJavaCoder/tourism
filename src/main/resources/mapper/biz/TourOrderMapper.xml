@@ -80,4 +80,9 @@
         AND
             state = #{fromState}
     </update>
+
+    <select id="selectOrderedUserIdList" resultType="java.lang.Integer">
+        select user_id from e_tour_order where tour_product_id = #{tourProductId} and (state = #{state1} or state = #{state2})
+        order by create_time ASC limit 3
+    </select>
 </mapper>

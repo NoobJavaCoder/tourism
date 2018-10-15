@@ -23,6 +23,23 @@ public interface TourProductMapper {
 
     int updateStateById(@Param("state") Integer state, @Param("id") Integer id);
 
-    int updateStateByIdAndFromState(@Param("fromState") Integer fromState, @Param("id") Integer id ,@Param("toState") Integer state);
+    int updateStateByIdAndFromState(@Param("fromState") Integer fromState, @Param("id") Integer id, @Param("toState") Integer state);
+
+    /**
+     * 未下架产品列表分页
+     *
+     * @param startIndex
+     * @param pageSize
+     * @return
+     */
+    List<TourProduct> selectByPageAndState(@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize, @Param("state") Integer state);
+
+    /**
+     * 查询未下架的产品总数
+     *
+     * @param state
+     * @return
+     */
+    Integer countByState(Integer state);
 
 }
