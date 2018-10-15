@@ -1,8 +1,8 @@
 package com.keendo.biz.service;
 
 import com.keendo.architecture.utils.Log;
+import com.keendo.biz.service.CfgService.Constants;
 import com.keendo.biz.service.bean.cos.COSUploadSuccessResp;
-import com.keendo.biz.service.constant.GlobalConfigConstants;
 import com.keendo.biz.service.utils.JsonUtil;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
@@ -37,10 +37,10 @@ public class COSService {
 
     @PostConstruct
     public void init(){
-        SECRET_ID = cfgService.get(GlobalConfigConstants.COS_SECRET_ID_KEY);
-        SECRET_KEY = cfgService.get(GlobalConfigConstants.COS_SECRET_KEY_KEY);
-        APP_ID = cfgService.getLong(GlobalConfigConstants.COS_APP_ID_KEY);
-        REGION = cfgService.get(GlobalConfigConstants.COS_REGION_KEY);
+        SECRET_ID = cfgService.get(Constants.COS_SECRET_ID_KEY);
+        SECRET_KEY = cfgService.get(Constants.COS_SECRET_KEY_KEY);
+        APP_ID = cfgService.getLong(Constants.COS_APP_ID_KEY);
+        REGION = cfgService.get(Constants.COS_REGION_KEY);
 
 
         Credentials cred = new Credentials(APP_ID, SECRET_ID, SECRET_KEY);
@@ -54,8 +54,8 @@ public class COSService {
         // 初始化cosClient
 
         cosClient = new COSClient(clientConfig, cred);
-        ORDINARY_BUCKET_NAME = cfgService.get(GlobalConfigConstants.COS_BUCKET_NAME_ORDINARY_KEY);
-        SENSITIVE_BUCKET_NAME = cfgService.get(GlobalConfigConstants.COS_BUCKET_NAME_SENSITIVE_KEY);
+        ORDINARY_BUCKET_NAME = cfgService.get(Constants.COS_BUCKET_NAME_ORDINARY_KEY);
+        SENSITIVE_BUCKET_NAME = cfgService.get(Constants.COS_BUCKET_NAME_SENSITIVE_KEY);
     }
 
 

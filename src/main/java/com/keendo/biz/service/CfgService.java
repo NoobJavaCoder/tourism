@@ -36,6 +36,28 @@ public class CfgService {
         updateGlobalConfigCache();
     }
 
+
+    public static class Constants{
+
+        //COS
+        public final static String COS_SECRET_ID_KEY = "COS_SECRET_ID";
+        public final static String COS_SECRET_KEY_KEY = "COS_SECRET_KEY";
+        public final static String COS_APP_ID_KEY = "COS_APP_ID";
+        public final static String COS_BUCKET_NAME_ORDINARY_KEY = "COS_BUCKET_NAME_ORDINARY";
+        public final static String COS_BUCKET_NAME_SENSITIVE_KEY = "COS_BUCKET_NAME_SENSITIVE";
+        public final static String COS_REGION_KEY = "COS_REGION";
+
+        //SMS
+        public final static String SMS_SIGN_KEY = "SMS_SIGN";//签名
+        public final static String SMS_TPL_ID_USER_INFO = "SMS_TPL_ID";//模板id("我的资料"手机验证码)
+
+        //小程序
+        public final static String MCH_APPID_KEY = "MCH_APPID";//商户appid
+        public final static String MCHID_KEY = "MCHID";//商户id
+        public final static String CERT_PATH_KEY = "CERT_PATH";//证书路径
+        public final static String SIGN_KEY_KEY = "SIGN_KEY";//签名算法秘钥
+    }
+
     /**
      * 更新配置缓存
      */
@@ -195,4 +217,6 @@ public class CfgService {
         // 更新缓存 (注：因为gcfg.setXXX()作了trim()操作，所以这里反取出来）
         gCfgCache.put(gcfg.getKey(), gcfg.getValue());
     }
+
+
 }

@@ -146,8 +146,9 @@ public class TourProductService {
 
     public static class Constants {
         public final static Integer ON_GOING_STATE = 1;//进行中
-        public final static Integer FINISH_STATE = 2;//旅游结束
-        public final static Integer UNSHELVE_STATE = 3;//下架
         public final static Integer FULL_STATE = 5;//满员
+        public final static Integer FINISH_STATE = 9;//旅游结束
+        public final static Integer UNSHELVE_STATE = 13;//下架
+
     }
 }

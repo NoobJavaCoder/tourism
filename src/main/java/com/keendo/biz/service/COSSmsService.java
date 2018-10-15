@@ -3,18 +3,18 @@ package com.keendo.biz.service;
 import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.github.qcloudsms.httpclient.HTTPException;
+import com.keendo.architecture.utils.Log;
+import com.keendo.biz.service.CfgService.Constants;
 import com.keendo.biz.service.bean.sms.KdSmsSingleSenderResult;
-import com.keendo.biz.service.constant.GlobalConfigConstants;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @Service
-public class SMSService {
+public class COSSmsService {
 
     @Value("${sms.appid}")
     private String appid;
@@ -31,20 +31,16 @@ public class SMSService {
 
 
     /**
-     * 发送短信验证码
+     * 发送短信
      *
      * @param phoneNumber:手机号码
-     * @param verifyCode:验证码
+     * @param templateId:模板id
+     * @param params:短信模板参数
      * @return 返回信息
      */
-    public KdSmsSingleSenderResult sendCode(String phoneNumber, String verifyCode) {
+    public KdSmsSingleSenderResult sendMsg(String phoneNumber, Integer templateId, String... params) {
 
-        String smsSign = cfgService.get(GlobalConfigConstants.SMS_SIGN_KEY);
-
-        Integer templateId = cfgService.getInteger(GlobalConfigConstants.SMS_TPL_ID_KEY);
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(verifyCode);
+        String smsSign = cfgService.get(Constants.SMS_SIGN_KEY);
 
         KdSmsSingleSenderResult kdResult = null;
 
@@ -61,12 +57,15 @@ public class SMSService {
 
         } catch (HTTPException e) {
             // HTTP响应码错误
+            Log.e(e);
             e.printStackTrace();
         } catch (JSONException e) {
             // json解析错误
+            Log.e(e);
             e.printStackTrace();
         } catch (IOException e) {
             // 网络IO错误
+            Log.e(e);
             e.printStackTrace();
         }
 
