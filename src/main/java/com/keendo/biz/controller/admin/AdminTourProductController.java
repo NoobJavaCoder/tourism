@@ -78,7 +78,7 @@ public class AdminTourProductController {
 
 
     /**
-     * 上传旅游产品封面图
+     * 上传旅游产品封面图 .
      *
      * @param uploadFile
      * @return
