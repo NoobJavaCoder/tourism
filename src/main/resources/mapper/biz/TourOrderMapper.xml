@@ -82,6 +82,7 @@
             state = #{fromState}
     </update>
 
+<<<<<<< HEAD
 
     <select id="selectByStateAndCreateTime" parameterType="map" resultMap="baseResultMap" >
         SELECT
@@ -103,5 +104,10 @@
         productId = #{productId}
         AND
         user_id = #{userId}
+=======
+    <select id="selectOrderedUserIdList" resultType="java.lang.Integer">
+        select user_id from e_tour_order where tour_product_id = #{tourProductId} and (state = #{state1} or state = #{state2})
+        order by create_time ASC limit 3
+>>>>>>> b41b3a5c7036fa71d5e4ae7ec67186686a846114
     </select>
 </mapper>

@@ -5,8 +5,12 @@ import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.bean.tourproduct.AddTourProduct;
 import com.keendo.biz.service.bean.tourproduct.AdminTourProductItemResp;
 import com.keendo.biz.service.bean.tourproduct.AdminTourProductListItemResp;
+import com.keendo.biz.service.bean.tourproduct.TourProductItem;
 import com.keendo.biz.service.utils.BeanUtils;
 import com.keendo.biz.service.utils.ListUtil;
+import com.keendo.biz.service.utils.TimeUtils;
+import com.keendo.user.model.User;
+import com.keendo.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,17 +31,76 @@ public class TourProductService {
     @Autowired
     private TourOrderService tourOrderService;
 
+    @Autowired
+    private UserService userService;
+
     private final static String DIRECTORY_NAME = "/tourism/product/coverImg";//旅游产品封面图存放路径
 
+
+    public List<TourProductItem> getAppTourProductItemList(Integer startIndex, Integer pageSize) {
+        //未下架产品
+        List<TourProduct> tourProductList = tourProductMapper.selectByPageAndState(startIndex, pageSize, Constants.UNSHELVE_STATE);
+
+        List<TourProductItem> items = new ArrayList<>();
+
+        if (ListUtil.isNotEmpty(tourProductList)) {
+
+            for (TourProduct tourProduct : tourProductList) {
+
+                TourProductItem item = BeanUtils.copyBean(tourProduct, TourProductItem.class);
+
+                //结束时间
+                Date departureTime = tourProduct.getDepartureTime();
+                Integer tourDay = tourProduct.getTourDay();
+                Date endTime = TimeUtils.dateOffset(departureTime, tourDay);
+                item.setEndTime(endTime);
+
+                //已下单人数
+                Integer tourProductId = tourProduct.getId();
+                Integer hasOrderedNum = tourOrderService.countByTourProductId(tourProductId);
+                item.setHasOrderedNum(hasOrderedNum);
+
+                //剩余人数
+                Integer maxParticipantNum = tourProduct.getMaxParticipantNum();//人数上限
+                item.setRemainNum(maxParticipantNum - hasOrderedNum);
+
+                //参与者头像
+                List<Integer> orderedUserIdList = tourOrderService.getOrderedUserIdList(tourProductId);
+                List<String> headImgList = new ArrayList<>();
+                if (ListUtil.isNotEmpty(orderedUserIdList)) {
+                    for (Integer userId : orderedUserIdList) {
+                        User user = userService.getById(userId);
+                        if (user != null) {
+                            String headImg = user.getHeadImgUrl();
+                            headImgList.add(headImg);
+                        }
+                    }
+                }
+                item.setHeadImgList(headImgList);
+
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
+
+    /**
+     * 首页产品总数,未下架状态的产品
+     * @return
+     */
+    public Integer indexCount(){
+        return tourProductMapper.countByState(Constants.UNSHELVE_STATE);
+    }
 
     public List<AdminTourProductListItemResp> getListByPage(Integer startIndex, Integer pageSize) {
         List<TourProduct> tourProductList = tourProductMapper.selectByPage(startIndex, pageSize);
 
         List<AdminTourProductListItemResp> resps = new ArrayList<>();
 
-        if(ListUtil.isNotEmpty(tourProductList)){
+        if (ListUtil.isNotEmpty(tourProductList)) {
 
-            for(TourProduct tourProduct : tourProductList){
+            for (TourProduct tourProduct : tourProductList) {
 
                 AdminTourProductListItemResp resp = BeanUtils.copyBean(tourProduct, AdminTourProductListItemResp.class);
 
@@ -72,11 +135,13 @@ public class TourProductService {
         return tourProductMapper.selectById(id);
     }
 
+
     /**
      * 获取admin查看旅游产品信息对象
+     *
      * @param id
      */
-    public AdminTourProductItemResp getAdminTourProductItemById(Integer id){
+    public AdminTourProductItemResp getAdminTourProductItemById(Integer id) {
 
         TourProduct tourProduct = this.getById(id);
 
@@ -133,21 +198,23 @@ public class TourProductService {
 
     /**
      * 修改为满员状态
+     *
      * @param id
      * @return
      */
-    public Integer fullState(Integer id){
+    public Integer fullState(Integer id) {
         return this.updateStateByIdAndFromState(id, Constants.ON_GOING_STATE, Constants.FULL_STATE);
     }
 
-    private Integer updateStateByIdAndFromState(Integer id ,Integer fromState ,Integer toState){
+    private Integer updateStateByIdAndFromState(Integer id, Integer fromState, Integer toState) {
         return tourProductMapper.updateStateByIdAndFromState(id, fromState, toState);
     }
 
     public static class Constants {
         public final static Integer ON_GOING_STATE = 1;//进行中
-        public final static Integer FINISH_STATE = 2;//旅游结束
-        public final static Integer UNSHELVE_STATE = 3;//下架
         public final static Integer FULL_STATE = 5;//满员
+        public final static Integer FINISH_STATE = 9;//旅游结束
+        public final static Integer UNSHELVE_STATE = 13;//下架
+
     }
 }

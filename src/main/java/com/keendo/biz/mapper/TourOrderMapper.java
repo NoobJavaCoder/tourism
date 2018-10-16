@@ -27,4 +27,13 @@ public interface TourOrderMapper {
     List<TourOrder>  selectByStateAndCreateTime(@Param("state") Integer state  ,@Param("createTime") Date createTime );
 
     List<TourOrder> selectByProductIdAndUserId(@Param("productId") Integer productId ,@Param("userId") Integer userId);
+
+    /**
+     * 查询下了订单的用户id集合
+     * @param tourProductId:旅游产品id
+     * @param state1:下单未付款
+     * @param state2:已付款
+     * @return
+     */
+    List<Integer> selectOrderedUserIdList(@Param("tourProductId") Integer tourProductId, @Param("state1") Integer state1,@Param("state2")Integer state2);
 }

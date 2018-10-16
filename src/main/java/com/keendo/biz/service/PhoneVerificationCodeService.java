@@ -18,17 +18,27 @@ public class PhoneVerificationCodeService {
     private CfgService cfgService;
 
     @Autowired
+    private COSSmsService cosSmsService;
+
+    @Autowired
     private PhoneVerificationCodeMapper phoneVerificationCodeMapper;
 
     private final static Integer VERIFICATION_CODE_LENGTH = 6;
 
+    /**
+     * 新增我的验证码
+     * @param phoneNumber
+     */
     public void addMyInofVerificationCode(String phoneNumber){
 
         String verificationCode = RandomUtil.radomNumber(VERIFICATION_CODE_LENGTH);
 
-        //tianjia
+        //添加验证码
         this.add(verificationCode, phoneNumber ,Constants.MY_INFO_PHONE_TYPE);
 
+        Integer templateId = cfgService.getInteger(CfgService.Constants.SMS_TPL_ID_USER_INFO);
+
+        cosSmsService.sendMsg(phoneNumber, templateId, verificationCode);
     }
 
     private PhoneVerificationCode getByPhoneNumberAndType(String phoneNumber ,Integer type){
@@ -49,6 +59,13 @@ public class PhoneVerificationCodeService {
         return phoneVerificationCodeMapper.insert(phoneVerificationCode);
     }
 
+    /**
+     * 验证有效性
+     * @param phoneNumber
+     * @param verificationCode
+     * @param type
+     * @return
+     */
     public Boolean verifyUsable(String phoneNumber ,String verificationCode ,Integer type){
 
         PhoneVerificationCode phoneVerificationCode = this.getByPhoneNumberAndType(phoneNumber ,type);
