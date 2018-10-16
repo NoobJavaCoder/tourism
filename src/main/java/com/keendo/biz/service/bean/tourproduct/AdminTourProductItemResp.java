@@ -11,6 +11,7 @@ public class AdminTourProductItemResp {
     private String title;
     private String tourSummary;
     private String coverImgUrl;
+    private String posterUrl;
     private Integer tourDay;
     private BigDecimal price;
     private Integer hasPaidNum;//已付款人数
@@ -21,6 +22,14 @@ public class AdminTourProductItemResp {
     private Integer maxParticipantNum;//人数上限
     private Date createTime;
     private Integer state;
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
 
     public String getTourSummary() {
         return tourSummary;

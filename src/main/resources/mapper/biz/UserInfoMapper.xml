@@ -12,6 +12,8 @@
   </resultMap>
 
 
+
+
   <sql id="Base_Column_List" >
      `id`, `user_id`, `sex`, `real_name`, `phone_no`, `id_card_no`, `nickname`
   </sql>
@@ -23,6 +25,18 @@
     values
     (#{userId},#{sex},#{realName},#{phoneNo},#{idCardNo},#{nickname})
   </insert>
+
+  <update id="updateByPrimaryKey" >
+    update e_user_info
+    set
+      user_id = #{userId},
+      sex = #{sex},
+      real_name = #{realName},
+      phone_no = #{phoneNo},
+      id_card_no = #{idCardNo},
+      nickname = #{nickname}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 
 
   <select id="selectById" resultMap="BaseResultMap">
@@ -53,20 +67,7 @@
   </select>
 
 
-  <update id="updateByPrimaryKey" parameterType="com.keendo.biz.model.TourProduct" >
-    update e_tour_product
-    set
-      title = #{title},
-      tour_summary = #{tourSummary},
-      cover_img_url = #{coverImgUrl},
-      departure_time = #{departureTime},
-      deadline = #{deadline},
-      tour_day = #{tourDay},
-      price = #{price},
-      max_participant_num = #{maxParticipantNum},
-      wx_pub_url = #{wxPubUrl}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+
 
   <delete id="deleteById" parameterType="java.lang.Integer">
     delete from e_tour_product

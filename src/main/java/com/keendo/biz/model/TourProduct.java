@@ -7,6 +7,7 @@ public class TourProduct {
     private Integer id;
     private String title;
     private String coverImgUrl;
+    private String posterUrl;
     private String tourSummary;
     private Date departureTime;
     private Integer tourDay;
@@ -16,6 +17,14 @@ public class TourProduct {
     private String wxPubUrl;
     private Date createTime;
     private Integer state;
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
 
     public Integer getState() {
         return state;

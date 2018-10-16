@@ -49,7 +49,7 @@ public class CfgService {
 
         //SMS
         public final static String SMS_SIGN_KEY = "SMS_SIGN";//签名
-        public final static String SMS_TPL_ID_USER_INFO = "SMS_TPL_ID";//模板id("我的资料"手机验证码)
+        public final static String SMS_TPL_ID_USER_INFO_KEY = "SMS_TPL_ID_USER_INFO";//模板id("我的资料"手机验证码)
 
         //小程序
         public final static String MCH_APPID_KEY = "MCH_APPID";//商户appid

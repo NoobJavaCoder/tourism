@@ -1,14 +1,14 @@
-package com.keendo.wxpay.utils;
+package com.keendo.wxpay.constant;
 
 public class Configure {
 
-    private static String KEY = "keendokey";
+    private static String KEY = "KEENdo";
 
     //小程序ID
     private static String APPID = "你的小程序id";
     //商户号
     private static String MCH_ID = "你的商户号";
-    //
+    //secret
     private static String SECRET = "你的小程序的secret";
 
     private static String CERT_PATH = "";

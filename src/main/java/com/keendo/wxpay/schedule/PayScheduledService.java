@@ -1,20 +1,11 @@
 package com.keendo.wxpay.schedule;
 
-import com.keendo.wxpay.bean.OrderQueryReq;
-import com.keendo.wxpay.bean.OrderQueryResp;
-import com.keendo.wxpay.model.PayRecord;
 import com.keendo.wxpay.service.PayRecordService;
 import com.keendo.wxpay.service.WXPayKitService;
-import com.keendo.wxpay.utils.Configure;
-import com.keendo.wxpay.utils.Log;
-import com.keendo.wxpay.utils.WXPayUtil;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /*默认单线程,使用多线程,多个定时任务是异步执行*/
 @Async

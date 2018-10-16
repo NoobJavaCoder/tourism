@@ -2,11 +2,11 @@ package com.keendo.biz.controller.admin;
 
 import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
-import com.keendo.biz.controller.admin.utils.AdminLoginUtils;
 import com.keendo.biz.controller.base.bean.IdReq;
 import com.keendo.biz.controller.base.bean.PageParamReq;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.TourProductService;
+import com.keendo.biz.service.TourProductService.Constants;
 import com.keendo.biz.service.bean.UploadFile;
 import com.keendo.biz.service.bean.tourproduct.AddTourProduct;
 import com.keendo.biz.service.bean.tourproduct.AdminTourProductItemResp;
@@ -78,7 +78,7 @@ public class AdminTourProductController {
 
 
     /**
-     * 上传旅游产品封面图 .
+     * 上传旅游产品封面图
      *
      * @param uploadFile
      * @return
@@ -87,7 +87,22 @@ public class AdminTourProductController {
     @RequestMapping(value = "/upload/cover-img", method = RequestMethod.POST)
     public RespBase addCoverImg(UploadFile uploadFile) {
 
-        String url = tourProductService.uploadPic(uploadFile.getMultipartFile());
+        String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.COVER_DIRECTORY_NAME);
+
+        return RespHelper.ok(url);
+    }
+
+    /**
+     * 上传旅游分享海报
+     *
+     * @param uploadFile
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/upload/poster", method = RequestMethod.POST)
+    public RespBase uploadPoster(UploadFile uploadFile) {
+
+        String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.POSTER_DIRECTORY_NAME);
 
         return RespHelper.ok(url);
     }

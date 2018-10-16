@@ -34,8 +34,6 @@ public class TourProductService {
     @Autowired
     private UserService userService;
 
-    private final static String DIRECTORY_NAME = "/tourism/product/coverImg";//旅游产品封面图存放路径
-
 
     public List<TourProductItem> getAppTourProductItemList(Integer startIndex, Integer pageSize) {
         //未下架产品
@@ -87,9 +85,10 @@ public class TourProductService {
 
     /**
      * 首页产品总数,未下架状态的产品
+     *
      * @return
      */
-    public Integer indexCount(){
+    public Integer indexCount() {
         return tourProductMapper.countByState(Constants.UNSHELVE_STATE);
     }
 
@@ -127,8 +126,8 @@ public class TourProductService {
      * @param multipartFile
      * @return
      */
-    public String uploadPic(MultipartFile multipartFile) {
-        return uploadService.uploadPic(multipartFile, DIRECTORY_NAME, String.valueOf(System.currentTimeMillis()));
+    public String uploadPic(MultipartFile multipartFile, String directory) {
+        return uploadService.uploadPic(multipartFile, directory, String.valueOf(System.currentTimeMillis()));
     }
 
     public TourProduct getById(Integer id) {
@@ -211,6 +210,10 @@ public class TourProductService {
     }
 
     public static class Constants {
+
+        public final static String COVER_DIRECTORY_NAME = "/tourism/product/coverImg";//旅游产品封面图存放路径
+        public final static String POSTER_DIRECTORY_NAME = "/tourism/product/poster";//旅游产品海报存放路径
+
         public final static Integer ON_GOING_STATE = 1;//进行中
         public final static Integer FULL_STATE = 5;//满员
         public final static Integer FINISH_STATE = 9;//旅游结束

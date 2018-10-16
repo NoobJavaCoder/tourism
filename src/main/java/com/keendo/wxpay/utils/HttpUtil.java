@@ -1,5 +1,6 @@
 package com.keendo.wxpay.utils;
 
+import com.keendo.wxpay.constant.Configure;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
