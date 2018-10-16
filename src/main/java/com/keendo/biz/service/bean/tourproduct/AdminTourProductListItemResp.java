@@ -1,6 +1,5 @@
 package com.keendo.biz.service.bean.tourproduct;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
