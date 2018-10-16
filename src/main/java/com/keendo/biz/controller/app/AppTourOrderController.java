@@ -4,10 +4,10 @@ import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.controller.admin.bean.order.AddTourOrderReq;
-import com.keendo.biz.controller.app.utils.AppLoginUtils;
 import com.keendo.biz.controller.base.bean.IdReq;
 import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.bean.order.OrderUserDetail;
+import com.keendo.user.controlller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(value = "/app/tour-order")
-public class AppTourOrderController {
+public class AppTourOrderController extends BaseController{
 
     @Autowired
     private TourOrderService tourOrderService;
@@ -25,7 +25,7 @@ public class AppTourOrderController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RespBase getAuctionItemPage(@RequestBody AddTourOrderReq addTourOrderReq){
 
-        Integer userId = AppLoginUtils.getUserId();
+        Integer userId = getUserId();
 
         if(userId == null){
             return RespHelper.nologin();
@@ -54,7 +54,10 @@ public class AppTourOrderController {
             throw  new BizException("订单不能为空");
         }
 
-        Integer userId = AppLoginUtils.getUserId();
+        Integer userId = getUserId();
+        if(userId == null){
+            return RespHelper.nologin();
+        }
 
         tourOrderService.cancelOrder(tourOrderId ,userId);
 

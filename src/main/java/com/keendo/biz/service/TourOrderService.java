@@ -3,10 +3,12 @@ package com.keendo.biz.service;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.architecture.utils.Log;
 import com.keendo.biz.mapper.TourOrderMapper;
+import com.keendo.biz.model.OrderOpt;
 import com.keendo.biz.model.TourOrder;
 import com.keendo.biz.model.TourOrderDetail;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.bean.order.AdminProductOrderItemResp;
+import com.keendo.biz.service.bean.order.MyOrderDetail;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.user.service.utils.BeanUtil;
@@ -46,6 +48,66 @@ public class TourOrderService {
 
     //订单保留时间，超过则取消
     private final static Long ORDER_RETENTION_TIME = 15 * 60 * 1000L;
+
+    public MyOrderDetail getMyOrderDetail(Integer tourOrderId){
+
+        MyOrderDetail myOrderDetail = new MyOrderDetail();
+
+        TourOrder tourOrder = getById(tourOrderId);
+
+        Integer tourProductId = tourOrder.getTourProductId();
+        //产品ID
+        myOrderDetail.setTourProductId(tourProductId);
+
+        TourProduct tourProduct = tourProductService.getById(tourProductId);
+
+        //产品封面图片
+        String coverImgUrl = tourProduct.getCoverImgUrl();
+        myOrderDetail.setCoverImgUrl(coverImgUrl);
+
+        //产品名字
+        String title = tourProduct.getTitle();
+        myOrderDetail.setProductTitle(title);
+
+        //出发时间
+        Date departureTime = tourProduct.getDepartureTime();
+        myOrderDetail.setDepartureTime(departureTime);
+
+        //花费
+        BigDecimal price = myOrderDetail.getPrice();
+        myOrderDetail.setPrice(price);
+
+        //订单轨迹
+        List<OrderOpt> orderOptList = orderOptService.getListByOrderId(tourOrderId);
+        for(OrderOpt orderOpt : orderOptList){
+            Integer toState = orderOpt.getToState();
+            if(toState.equals(Constants.NOT_PAY_STATE)){
+                myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
+            }
+
+            if(toState.equals(Constants.HAS_PAY_STATE)){
+                myOrderDetail.setOrderPayTime(orderOpt.getCreateTime());
+            }
+        }
+
+
+        //订单人信息
+        TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(tourOrderId);
+
+        //电话号码
+        String phoneNumber = orderDetail.getPhoneNumber();
+        myOrderDetail.setPhoneNumber(phoneNumber);
+
+        //真实名字
+        String realName = orderDetail.getRealName();
+        myOrderDetail.setRealName(realName);
+
+        //身份证号码
+        String idCardNumber = orderDetail.getIdCardNumber();
+        myOrderDetail.setIdCardNumber(idCardNumber);
+
+        return myOrderDetail;
+    }
 
     /**
      * 新增订单
@@ -99,6 +161,7 @@ public class TourOrderService {
 
             Integer orderCount = hasPaidCount + unPaidCount;
             Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
+
             //如果满员则修改产品状态
             if(maxParticipantNum.equals(orderCount)){
                 Integer fullStateResult = tourProductService.fullState(productId);

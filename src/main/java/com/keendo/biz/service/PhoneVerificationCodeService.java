@@ -68,7 +68,7 @@ public class PhoneVerificationCodeService {
      */
     public Boolean verifyUsable(String phoneNumber ,String verificationCode ,Integer type){
 
-        PhoneVerificationCode phoneVerificationCode = this.getByPhoneNumberAndType(phoneNumber ,type);
+        PhoneVerificationCode phoneVerificationCode = getByPhoneNumberAndType(phoneNumber ,type);
 
         if(phoneVerificationCode == null){
             return false;
