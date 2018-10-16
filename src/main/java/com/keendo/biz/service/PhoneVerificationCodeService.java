@@ -36,7 +36,7 @@ public class PhoneVerificationCodeService {
         //添加验证码
         this.add(verificationCode, phoneNumber ,Constants.MY_INFO_PHONE_TYPE);
 
-        Integer templateId = cfgService.getInteger(CfgService.Constants.SMS_TPL_ID_USER_INFO);
+        Integer templateId = cfgService.getInteger(CfgService.Constants.SMS_TPL_ID_USER_INFO_KEY);
 
         cosSmsService.sendMsg(phoneNumber, templateId, verificationCode);
     }
@@ -99,8 +99,8 @@ public class PhoneVerificationCodeService {
         return true;
     }
 
-    private static class Constants{
-        private final static Integer MY_INFO_PHONE_TYPE = 1;
+    public static class Constants{
+        public final static Integer MY_INFO_PHONE_TYPE = 1;
 
         private final static Integer INACTIVATED_STATE = 0;//未激活
         private final static Integer USED_STATE = 1;//已经使用

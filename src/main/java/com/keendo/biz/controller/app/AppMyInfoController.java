@@ -2,10 +2,14 @@ package com.keendo.biz.controller.app;
 
 import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
+import com.keendo.biz.controller.app.req.SaveUserInfoReq;
 import com.keendo.biz.controller.app.req.SendCodeReq;
 import com.keendo.biz.model.UserInfo;
 import com.keendo.biz.service.PhoneVerificationCodeService;
+import com.keendo.biz.service.PhoneVerificationCodeService.Constants;
 import com.keendo.biz.service.UserInfoService;
+import com.keendo.biz.service.bean.userinfo.UserInfoResp;
+import com.keendo.biz.service.utils.BeanUtils;
 import com.keendo.user.controlller.BaseController;
 import com.keendo.user.service.utils.VerifyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +31,22 @@ public class AppMyInfoController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public RespBase saveUserInfo(@RequestBody UserInfo userInfo){
+    public RespBase saveUserInfo(@RequestBody SaveUserInfoReq req){
+        Integer userId = getUserId();
+        if(userId == null){
+            RespHelper.nologin();
+        }
 
-//        Integer userId = getUserId();
-//        if(userId == null){
-//            RespHelper.nologin();
-//        }
-        Integer userId = 1;
+        UserInfo userInfo = BeanUtils.copyBean(req, UserInfo.class);
 
         String phoneNo = userInfo.getPhoneNo();
         if(!VerifyUtil.isPhone(phoneNo)){
             return RespHelper.failed("请填写正确的手机号码!");
+        }
+
+        String verifyCode = req.getVerifyCode();
+        if(!phoneVerificationCodeService.verifyUsable(phoneNo,verifyCode,Constants.MY_INFO_PHONE_TYPE)){
+            return RespHelper.failed("验证码错误");
         }
 
         String realName = userInfo.getRealName();
@@ -65,15 +74,14 @@ public class AppMyInfoController extends BaseController {
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     public RespBase getUserInfo(){
 
-        //        Integer userId = getUserId();
-//        if(userId == null){
-//            RespHelper.nologin();
-//        }
-        Integer userId = 1;
+        Integer userId = getUserId();
+        if(userId == null){
+            RespHelper.nologin();
+        }
 
-        UserInfo appUserInfo = userInfoService.getAppUserInfo(userId);
+        UserInfoResp resp = userInfoService.getAppUserInfo(userId);
 
-        return RespHelper.ok(appUserInfo);
+        return RespHelper.ok(resp);
     }
 
     /**
@@ -91,7 +99,6 @@ public class AppMyInfoController extends BaseController {
         }
 
         phoneVerificationCodeService.addMyInofVerificationCode(phoneNumber);
-
         return RespHelper.ok();
     }
 }
