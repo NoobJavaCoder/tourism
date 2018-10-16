@@ -19,6 +19,7 @@
         values ( #{tourProductId} ,#{createTime} ,#{state} ,#{userId} )
     </insert>
 
+
     <select id="selectByTourProductId" parameterType="map" resultMap="baseResultMap">
         SELECT
             <include refid="Base_Column_List"/>
@@ -80,4 +81,27 @@
         AND
             state = #{fromState}
     </update>
+
+
+    <select id="selectByStateAndCreateTime" parameterType="map" resultMap="baseResultMap" >
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_tour_order
+        WHERE
+        create_time &lt;= #{createTime}
+        AND
+        state = #{state}
+    </select>
+
+    <select id="selectByProductIdAndUserId" parameterType="map" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_tour_order
+        WHERE
+        productId = #{productId}
+        AND
+        user_id = #{userId}
+    </select>
 </mapper>

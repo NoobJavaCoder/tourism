@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="com.keendo.biz.mapper.OrderOptMapper">
+    <resultMap id="baseResultMap" type="com.keendo.biz.model.OrderOpt">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="order_id" property="orderId" jdbcType="INTEGER" />
+        <result column="from_state" property="fromState" jdbcType="INTEGER" />
+        <result column="to_state" property="toState" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, create_time, order_id, from_state, to_state ,user_id
+    </sql>
+
+
+    <insert id="insert" parameterType="map">
+        INSERT INTO e_order_opt ( create_time, order_id, from_state, to_state ,user_id) VALUES  ( #{createTime} ,#{orderId} ,#{fromState} ,#{toState} ,#{userId})
+    </insert>
+
+    <select id="selectByOrderId" parameterType="map" resultMap="baseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+        e_order_opt
+        WHERE
+            order_id = #{orderId}
+    </select>
+</mapper>

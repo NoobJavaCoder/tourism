@@ -1,0 +1,43 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keendo.biz.mapper.PhoneVerificationCodeMapper">
+    <resultMap id="baseResultMap" type="EPhoneVerificationCode">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="verification_code" property="verificationCode" jdbcType="VARCHAR" />
+        <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        `id` , `verification_code` , `phone_number` , `state` , `create_time` , `type` 
+    </sql>
+
+    <insert id="insert" parameterType="com.keendo.biz.model.PhoneVerificationCode">
+        insert into
+            e_phone_verification_code
+                ( `verification_code` , `phone_number` , `state` , `create_time` , `type` )
+        values (#{verificationCode} ,#{phoneNumber} ,#{state} ,#{createTime} ,#{type} )
+    </insert>
+
+    <update id="updateState" parameterType="map">
+        update e_phone_verification_code
+        set
+        state = #{state}
+        WHERE
+        id = #{id}
+    </update>
+
+    <select id="selectNewestByPhoneNumberAndType" parameterType="map" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_phone_verification_code
+        WHERE
+        phone_number = #{phoneNumber}
+        AND
+        `type` = #{type}
+        ORDER BY create_time DESC
+        limit 1
+    </select>
+</mapper>

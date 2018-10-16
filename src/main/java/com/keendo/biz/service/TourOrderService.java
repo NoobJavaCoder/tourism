@@ -41,6 +41,9 @@ public class TourOrderService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private OrderOptService orderOptService;
+
     //订单保留时间，超过则取消
     private final static Long ORDER_RETENTION_TIME = 15 * 60 * 1000L;
 
@@ -62,7 +65,12 @@ public class TourOrderService {
                 throw new BizException("该产品状态无法下单");
             }
 
-            //TODO 检查自己是否已经下单
+            //检查自己是否已经下单
+            Boolean hasOrder = isHasOrder(productId, userId);
+
+            if(hasOrder){
+                throw new BizException("已经存在订单");
+            }
 
             //添加订单
             TourOrder tourOrder = new TourOrder();
@@ -81,6 +89,9 @@ public class TourOrderService {
             tourOrderDetail.setPrice(price);
 
             tourOrderDetailService.save(tourOrderDetail);
+
+            //订单轨迹
+            orderOptService.add(orderId, null, Constants.NOT_PAY_STATE ,userId);
 
             //检查是否满员
             Integer hasPaidCount = countHasPaidByTourProductId(productId);
@@ -190,7 +201,38 @@ public class TourOrderService {
      * @param orderId
      */
     public void paySuccess(Integer orderId){
-        updateByFromState(orderId, Constants.NOT_PAY_STATE, Constants.HAS_PAY_STATE);
+
+        transactionTemplate.execute(status -> {
+
+            updateByFromState(orderId, Constants.NOT_PAY_STATE, Constants.HAS_PAY_STATE);
+
+            TourOrder tourOrder = getById(orderId);
+
+            Integer userId = tourOrder.getUserId();
+
+            //订单轨迹
+            orderOptService.add(orderId, Constants.NOT_PAY_STATE, Constants.HAS_PAY_STATE, userId);
+
+            return null;
+        });
+    }
+
+
+    private Boolean isHasOrder(Integer productId ,Integer userId){
+        List<TourOrder> tourOrderList = getByProductIdAndUserId(productId, userId);
+
+        for(TourOrder tourOrder : tourOrderList){
+            Integer state = tourOrder.getState();
+            if(state.equals(Constants.NOT_PAY_STATE)){
+                return true;
+            }
+
+            if(state.equals(Constants.HAS_PAY_STATE)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Integer updateByFromState(Integer orderId ,Integer fromState ,Integer toState){
@@ -219,10 +261,16 @@ public class TourOrderService {
             throw new BizException("未付款的订单才能取消");
         }
 
-        Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.CANCEL_STATE);
-        if(updateResult == 0){
-            throw new BizException("取消订单失败");
-        }
+        transactionTemplate.execute(status -> {
+
+            Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.CANCEL_STATE);
+            if(updateResult == 0){
+                throw new BizException("取消订单失败");
+            }
+
+            return updateResult;
+        });
+
     }
 
     /**
@@ -265,15 +313,45 @@ public class TourOrderService {
         updateByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.CANCEL_STATE, date);
     }
 
-    public Integer updateByStateAndCreateTime(Integer fromState ,Integer toState ,Date createTime){
+    private Integer updateByStateAndCreateTime(Integer fromState ,Integer toState ,Date createTime){
         Log.i("cancel tourOrder that is unPaid.");
-        return tourOrderMapper.updateByStateAndCreateTime(fromState, toState, createTime);
+
+        List<TourOrder> tourOrderList = getByStateAndCreateTime(fromState ,createTime);
+
+        for(TourOrder tourOrder : tourOrderList){
+
+            transactionTemplate.execute(status -> {
+                Integer id = tourOrder.getId();
+                updateByFromState(id, fromState, toState);
+
+                orderOptService.addSystemOpt(id, fromState, toState);
+
+                return null;
+            });
+
+        }
+
+        if(tourOrderList == null){
+            return 0;
+        }else {
+            return tourOrderList.size();
+        }
+    }
+
+    public List<TourOrder> getByStateAndCreateTime(Integer state ,Date createTime){
+
+        return tourOrderMapper.selectByStateAndCreateTime(state, createTime);
+    }
+
+    private List<TourOrder> getByProductIdAndUserId(Integer tourOrder ,Integer userId){
+        return tourOrderMapper.selectByProductIdAndUserId(tourOrder ,userId);
     }
 
 
     private static class Constants{
-        private final static Integer NOT_PAY_STATE = 0;
-        private final static Integer HAS_PAY_STATE = 1;
-        private final static Integer CANCEL_STATE = 2;
+        private final static Integer NOT_PAY_STATE = 0;//未付款
+        private final static Integer HAS_PAY_STATE = 1;//已经付款
+        private final static Integer CANCEL_STATE = 2;//取消
+        private final static Integer HAS_RETURN_STATE = 3;//已经退款
     }
 }
