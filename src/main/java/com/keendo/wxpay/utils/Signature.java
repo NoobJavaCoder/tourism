@@ -1,5 +1,6 @@
 package com.keendo.wxpay.utils;
 
+import com.keendo.wxpay.constant.Configure;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import java.lang.reflect.Field;

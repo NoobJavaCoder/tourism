@@ -1,7 +1,6 @@
 package com.keendo.biz.service.bean.tourproduct;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.xml.internal.rngom.binary.DataExceptPattern;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

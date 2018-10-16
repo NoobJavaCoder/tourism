@@ -1,6 +1,7 @@
 package com.keendo.wxpay.service;
 
 import com.keendo.wxpay.bean.*;
+import com.keendo.wxpay.constant.Configure;
 import com.keendo.wxpay.constant.WXPayConstants;
 import com.keendo.wxpay.exception.BizException;
 import com.keendo.wxpay.utils.*;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 
@@ -33,6 +33,10 @@ public class WXPayKitService {
 
     private static final String RESULT_CODE_SUCCESS = "SUCCESS";
 
+    /*付款的接口,写得通用一些*/
+    public void pay(){
+
+    }
 
     /**
      * 统一下单
