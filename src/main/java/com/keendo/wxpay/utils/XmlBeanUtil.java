@@ -224,6 +224,7 @@ public class XmlBeanUtil {
 
 
     public static void main(String[]args)throws Exception{
+        String key = "";
         String xml = "<xml>\n" +
                 "  <appid><![CDATA[wx2421b1c4370ec43b]]></appid>\n" +
                 "  <attach><![CDATA[支付测试]]></attach>\n" +
@@ -248,7 +249,7 @@ public class XmlBeanUtil {
                 "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
                 "  <transaction_id><![CDATA[1004400740201409030005092168]]></transaction_id>\n" +
                 "</xml>";
-        String sign = WXPayUtil.getSign(xml);
+        String sign = WXPayUtil.getSign(xml,key);
 
         System.out.println(sign);
     }

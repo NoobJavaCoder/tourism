@@ -23,16 +23,8 @@ public class MytestController {
 
     @RequestMapping(value = "/test1", method = RequestMethod.POST)
     public RespBase test1() {
-        UserInfo info = new UserInfo();
-        info.setUserId(1);
-        info.setNickname("私募");
-        info.setId(1);
-        info.setIdCardNo("2");
-        info.setPhoneNo("3");
-        info.setRealName("下心");
-        info.setSex(1);
-        userInfoService.saveUserInfo(info);
-        return RespHelper.ok();
+        UserInfo info = userInfoService.getByUserId(1);
+        return RespHelper.ok(info);
     }
 
 

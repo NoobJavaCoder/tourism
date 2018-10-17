@@ -52,10 +52,13 @@ public class CfgService {
         public final static String SMS_TPL_ID_USER_INFO_KEY = "SMS_TPL_ID_USER_INFO";//模板id("我的资料"手机验证码)
 
         //小程序
-        public final static String MCH_APPID_KEY = "MCH_APPID";//商户appid
-        public final static String MCHID_KEY = "MCHID";//商户id
+        public final static String MINIAPP_APP_ID_KEY = "MINIAPP_APP_ID";//小程序appid
+        public final static String MINIAPP_SECRET_KEY = "MINIAPP_SECRET";//小程序secret
+
+        //微信商户
+        public final static String MCH_ID_KEY = "MCH_ID";//商户id
+        public final static String MCH_KEY_KEY = "MCH_KEY";//签名算法秘钥
         public final static String CERT_PATH_KEY = "CERT_PATH";//证书路径
-        public final static String SIGN_KEY_KEY = "SIGN_KEY";//签名算法秘钥
     }
 
     /**

@@ -16,7 +16,7 @@ public class Signature {
      * @return 签名
      * @throws IllegalAccessException
      */
-    public static String getSign(Object o) throws IllegalAccessException {
+    public static String getSign(Object o,String key) throws IllegalAccessException {
         ArrayList<String> list = new ArrayList<String>();
         Class cls = o.getClass();
         Field[] fields = cls.getDeclaredFields();
@@ -38,18 +38,18 @@ public class Signature {
             sb.append(arrayToSort[i]);
         }
         String result = sb.toString();
-        result += "key=" + Configure.getKey();
+        result += "key=" + key;
         System.out.println("签名数据："+result);
         result = MD5.MD5Encode(result).toUpperCase();
         return result;
     }
 
-    public static String getSign(Map map){
+    public static String getSign(Map map,String key){
         ArrayList<String> list = new ArrayList<>();
-        for(Object key:map.keySet()){
-            Object v = map.get(key);
-            if(null != v && !"".equals(v) && !"sign".equals(key)){
-                list.add(key + "=" + map.get(key) + "&");
+        for(Object k:map.keySet()){
+            Object v = map.get(k);
+            if(null != v && !"".equals(v) && !"sign".equals(k)){
+                list.add(k + "=" + map.get(k) + "&");
             }
         }
 //        for(Map.Entry<String,String> entry:map.entrySet()){
@@ -65,7 +65,7 @@ public class Signature {
             sb.append(arrayToSort[i]);
         }
         String result = sb.toString();
-        result += "key=" + Configure.getKey();
+        result += "key=" + key;
         //Util.log("Sign Before MD5:" + result);
         result = MD5.MD5Encode(result).toUpperCase();
         //Util.log("Sign Result:" + result);

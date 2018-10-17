@@ -1,5 +1,7 @@
 package com.keendo.wxpay.service;
 
+import com.keendo.biz.service.CfgService;
+import com.keendo.biz.service.CfgService.Constants;
 import com.keendo.wxpay.bean.*;
 import com.keendo.wxpay.constant.Configure;
 import com.keendo.wxpay.constant.WXPayConstants;
@@ -28,13 +30,16 @@ public class WXPayKitService {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
+    private CfgService cfgService;
+
     //查询订单url
     private static String QUERY_ORDER_URL = "https://api.mch.weixin.qq.com/pay/orderquery";
 
     private static final String RESULT_CODE_SUCCESS = "SUCCESS";
 
     /*付款的接口,写得通用一些*/
-    public void pay(){
+    public void pay() {
 
     }
 
@@ -71,7 +76,7 @@ public class WXPayKitService {
      */
     public OrderQueryResp queryOrder(OrderQueryReq req) throws BizException {
 
-        Log.i("【订单查询】，request={?}", JsonUtil.toJSon(req));
+        Log.i("【OrderQuery】，request={?}", JsonUtil.toJSon(req));
 
         String requestXml = XmlBeanUtil.toXml(req);
 
@@ -99,8 +104,9 @@ public class WXPayKitService {
      */
     @Transactional
     public WXNotifyResp callback(String xmlRet) throws Exception {
+        String key = cfgService.get(Constants.MCH_KEY_KEY);
 
-        Boolean signValid = WXPayUtil.checkSign(xmlRet);
+        Boolean signValid = WXPayUtil.checkSign(xmlRet, key);
 
         String resultCode = WXPayUtil.getResultCode(xmlRet);
 

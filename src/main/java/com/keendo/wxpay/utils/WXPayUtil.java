@@ -20,29 +20,39 @@ public class WXPayUtil {
     /**
      * 生成签名
      *
-     * @param o
+     * @param o:签名对象
+     * @param key:秘钥
      * @return
      * @throws Exception
      */
-    public static String getSign(Object o) throws Exception {
-        return Signature.getSign(o);
+    public static String getSign(Object o, String key) throws Exception {
+        return Signature.getSign(o, key);
     }
 
-    public static String getSign(String xmlRet) throws Exception {
+    /**
+     * 生成签名
+     *
+     * @param xmlRet:xml
+     * @param key:秘钥
+     * @return
+     * @throws Exception
+     */
+    public static String getSign(String xmlRet, String key) throws Exception {
         Map map = XmlBeanUtil.doXMLParse(xmlRet);
-        String sign = Signature.getSign(map);
+        String sign = Signature.getSign(map, key);
         return sign;
     }
 
     /**
      * 验证签名
      *
-     * @param xmlRet
+     * @param xmlRet:xml
+     * @param key:秘钥
      * @return
      * @throws Exception
      */
-    public static boolean checkSign(String xmlRet) throws Exception {
-        String geneSign = getSign(xmlRet);
+    public static boolean checkSign(String xmlRet, String key) throws Exception {
+        String geneSign = getSign(xmlRet, key);
         String signFromXml = getSignFromXml(xmlRet);
         return geneSign.equals(signFromXml);
     }
@@ -55,6 +65,7 @@ public class WXPayUtil {
 
     /**
      * 从支付回调信息中获取resultCode
+     *
      * @param xmlRet
      * @return
      * @throws Exception
@@ -70,12 +81,12 @@ public class WXPayUtil {
      *
      * @return
      */
-    public static MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId) throws Exception {
+    public static MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId, String key) throws Exception {
         PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
 
         MiniAppPayParam miniAppPayParam = BeanUtil.copyBean(paySignature, MiniAppPayParam.class);
 
-        String paySign = getSign(paySignature);
+        String paySign = getSign(paySignature, key);
 
         miniAppPayParam.setPaySign(paySign);
 
