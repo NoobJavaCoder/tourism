@@ -34,7 +34,7 @@ public class AppMyInfoController extends BaseController {
     public RespBase saveUserInfo(@RequestBody SaveUserInfoReq req){
         Integer userId = getUserId();
         if(userId == null){
-            RespHelper.nologin();
+            return RespHelper.nologin();
         }
 
         UserInfo userInfo = BeanUtils.copyBean(req, UserInfo.class);
