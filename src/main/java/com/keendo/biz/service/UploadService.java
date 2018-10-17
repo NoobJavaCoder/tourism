@@ -1,7 +1,9 @@
 package com.keendo.biz.service;
 
 import com.keendo.architecture.utils.Log;
+import com.keendo.biz.service.utils.FileUtil;
 import com.keendo.biz.service.utils.JsonHelper;
+import com.keendo.wxpay.exception.BizException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,17 @@ public class UploadService {
      * @param directory
      * @return
      */
-    public String uploadPic(MultipartFile file, String directory , String fileName){
+    public String uploadPic(MultipartFile file, String directory , String timeStampVal){
 
-        String path = this.connect(directory, fileName);
+        if(file == null){
+            throw new BizException("上传图片为空");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String fileSuffix = FileUtil.getFileSuffix(originalFilename);
+        String filename = timeStampVal + fileSuffix;
+
+        String path = this.connect(directory, filename);
 
         String cosPicUrl = null;
         try {
