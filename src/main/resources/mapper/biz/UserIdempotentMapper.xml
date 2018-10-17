@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="com.keendo.biz.mapper.UserIdempotentMapper">
+    <resultMap id="baseResultMap" type="com.keendo.biz.model.UserIdempotent">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+        `id`, `state`,`user_id` , `create_time`
+    </sql>
+
+    <update id="updateState" >
+        update e_user_idempotent set
+            state = #{state}
+                     WHERE id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="com.keendo.biz.model.UserIdempotent" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            e_user_idempotent (`state`, `user_id`,`create_time`)
+        SELECT
+            #{state} , #{userId} , #{createTime}
+        FROM DUAL WHERE NOT EXISTS  (
+            SELECT
+                `state`, `user_id`,`create_time`
+            FROM
+                e_user_idempotent
+            WHERE
+                `state` = #{state}
+            AND
+                `user_id` = #{userId}
+        )
+    </insert>
+    
+    <select id="selectByPrimaryKey" resultMap="baseResultMap">
+        select <include refid="Base_Column_List"/> from e_user_idempotent where id = #{id} for update
+    </select>
+
+    <update id="updateByPrimaryKey">
+        update e_user_idempotent set state = 3 where id = #{id}
+    </update>
+
+
+</mapper>
