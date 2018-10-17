@@ -9,6 +9,7 @@ import com.keendo.biz.model.TourOrderDetail;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.bean.order.AdminProductOrderItemResp;
 import com.keendo.biz.service.bean.order.MyOrderDetail;
+import com.keendo.biz.service.bean.order.MyOrderItem;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.user.service.utils.BeanUtil;
@@ -417,6 +418,65 @@ public class TourOrderService {
      */
     public List<Integer> getOrderedUserIdList(Integer tourProductId){
         return tourOrderMapper.selectOrderedUserIdList(tourProductId,Constants.NOT_PAY_STATE,Constants.HAS_PAY_STATE);
+    }
+
+
+
+    /**
+     * 通过用户id获取分页
+     * @param userId
+     * @param startIndex
+     * @param pageSize
+     * @return
+     */
+    private List<TourOrder> getPageByUserId(Integer userId ,Integer startIndex ,Integer pageSize){
+        return tourOrderMapper.selectPageBydAndUserId(userId, startIndex, pageSize);
+    }
+
+    /**
+     * 获取我的订单列表
+     * @param userId
+     * @param startIndex
+     * @param pageSize
+     * @return
+     */
+    public List<MyOrderItem> getMyOrderList(Integer userId ,Integer startIndex ,Integer pageSize){
+
+        List<MyOrderItem> myOrderItemList = new ArrayList<>();
+
+        List<TourOrder> tourOrderList = getPageByUserId(userId, startIndex, pageSize);
+
+        for(TourOrder tourOrder : tourOrderList){
+            MyOrderItem myOrderItem = new MyOrderItem();
+
+            Integer orderId = tourOrder.getId();
+
+            TourOrderDetail tourOrderDetail = tourOrderDetailService.getByOrderId(orderId);
+
+            //花费
+            BigDecimal price = tourOrderDetail.getPrice();
+            myOrderItem.setPrice(price);
+
+            //产品出发时间
+            Integer tourProductId = tourOrder.getTourProductId();
+            TourProduct tourProduct = tourProductService.getById(tourProductId);
+            myOrderItem.setDepartureTime(tourProduct.getDepartureTime());
+
+            //产品标题
+            myOrderItem.setProductTitle(tourProduct.getTitle());
+
+            //产品封面
+            myOrderItem.setCoverImgUrl(tourProduct.getCoverImgUrl());
+
+            //订单状态
+            Integer state = tourOrder.getState();
+            myOrderItem.setTourOrderState(state);
+
+            myOrderItemList.add(myOrderItem);
+
+        }
+
+        return myOrderItemList;
     }
 
     private static class Constants{

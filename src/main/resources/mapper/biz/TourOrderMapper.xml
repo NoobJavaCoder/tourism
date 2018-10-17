@@ -100,7 +100,7 @@
         FROM
         e_tour_order
         WHERE
-        productId = #{productId}
+        tour_product_id = #{productId}
         AND
         user_id = #{userId}
     </select>
@@ -109,4 +109,17 @@
         select user_id from e_tour_order where tour_product_id = #{tourProductId} and (state = #{state1} or state = #{state2})
         order by create_time ASC limit 3
     </select>
+
+
+    <select id="selectPageBydAndUserId" resultMap="baseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_tour_order
+        where
+            user_id = #{userId}
+        order by create_time desc
+        limit #{startIndex} ,#{pageSize}
+    </select>
+
 </mapper>

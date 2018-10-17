@@ -5,6 +5,7 @@ import com.keendo.architecture.controller.RespHelper;
 import com.keendo.biz.controller.base.bean.PageParamReq;
 import com.keendo.biz.service.TourProductService;
 import com.keendo.biz.service.bean.tourproduct.TourProductItem;
+import com.keendo.user.controlller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/app/tour-product")
-public class AppTourProductController {
+public class AppTourProductController extends BaseController{
 
     @Autowired
     private TourProductService tourProductService;

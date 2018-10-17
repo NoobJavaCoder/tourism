@@ -22,11 +22,11 @@ public interface TourOrderMapper {
 
     int countByTourProductIdAndState(@Param("tourProductId") Integer tourProductId, @Param("state") Integer state);
 
-    int updateByStateAndCreateTime(@Param("fromState") Integer fromState , @Param("toState") Integer toState  ,@Param("createTime") Date createTime );
-
     List<TourOrder>  selectByStateAndCreateTime(@Param("state") Integer state  ,@Param("createTime") Date createTime );
 
     List<TourOrder> selectByProductIdAndUserId(@Param("productId") Integer productId ,@Param("userId") Integer userId);
+
+    List<TourOrder> selectPageBydAndUserId(@Param("userId") Integer userId ,@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize);
 
     /**
      * 查询下了订单的用户id集合
