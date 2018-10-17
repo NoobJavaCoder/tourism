@@ -6,6 +6,7 @@
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="cover_img_url" property="coverImgUrl" jdbcType="VARCHAR" />
     <result column="poster_url" property="posterUrl" jdbcType="VARCHAR" />
+    <result column="top_poster_url" property="topPosterUrl" jdbcType="VARCHAR" />
     <result column="departure_time" property="departureTime" jdbcType="TIMESTAMP" />
     <result column="deadline" property="deadline" jdbcType="TIMESTAMP" />
     <result column="tour_day" property="tourDay" jdbcType="INTEGER" />
@@ -22,7 +23,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-     `id`, `title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`state`,`poster_url`
+     `id`, `title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`state`,`poster_url`,`top_poster_url`
   </sql>
 
   <sql id="Blob_Column_List">
@@ -31,9 +32,9 @@
 
   <insert id="insert" parameterType="com.keendo.biz.model.TourProduct" >
     insert into e_tour_product
-    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`,`poster_url`)
+    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`,`poster_url`,`top_poster_url`)
     values
-    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state},#{posterUrl})
+    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state},#{posterUrl},#{topPosterUrl})
   </insert>
 
 
@@ -75,6 +76,7 @@
       tour_summary = #{tourSummary},
       cover_img_url = #{coverImgUrl},
       poster_url = #{posterUrl},
+      top_poster_url = #{topPosterUrl},
       departure_time = #{departureTime},
       deadline = #{deadline},
       tour_day = #{tourDay},

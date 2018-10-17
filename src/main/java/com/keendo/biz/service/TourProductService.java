@@ -212,7 +212,8 @@ public class TourProductService {
     public static class Constants {
 
         public final static String COVER_DIRECTORY_NAME = "/tourism/product/coverImg";//旅游产品封面图存放路径
-        public final static String POSTER_DIRECTORY_NAME = "/tourism/product/poster";//旅游产品海报存放路径
+        public final static String POSTER1_DIRECTORY_NAME = "/tourism/product/poster/share";//旅游产品海报存放路径
+        public final static String POSTER2_DIRECTORY_NAME = "/tourism/product/poster/top-bar";//旅游产品海报存放路径
 
         public final static Integer ON_GOING_STATE = 1;//进行中
         public final static Integer FULL_STATE = 5;//满员

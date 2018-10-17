@@ -14,6 +14,7 @@ public class TourProductItem {
     private String title;//产品标题
     private String coverImgUrl;//封面图
     private String posterUrl;//分享海报
+    private String topPosterUrl;
     private Integer tourDay;//出游天数
     @JsonFormat(pattern = "yyyy年MM月dd日", timezone = "GMT+8")
     private Date deadline;//报名截止日期
@@ -26,6 +27,14 @@ public class TourProductItem {
     private Integer hasOrderedNum;//已下单人数
     private Integer remainNum;//剩余人数
     private String wxPubUrl;//公众号链接
+
+    public String getTopPosterUrl() {
+        return topPosterUrl;
+    }
+
+    public void setTopPosterUrl(String topPosterUrl) {
+        this.topPosterUrl = topPosterUrl;
+    }
 
     public String getCoverImgUrl() {
         return coverImgUrl;

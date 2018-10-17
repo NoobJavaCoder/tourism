@@ -99,10 +99,25 @@ public class AdminTourProductController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/upload/poster", method = RequestMethod.POST)
-    public RespBase uploadPoster(UploadFile uploadFile) {
+    @RequestMapping(value = "/upload/share-poster", method = RequestMethod.POST)
+    public RespBase uploadPoster1(UploadFile uploadFile) {
 
-        String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.POSTER_DIRECTORY_NAME);
+        String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.POSTER1_DIRECTORY_NAME);
+
+        return RespHelper.ok(url);
+    }
+
+    /**
+     * 上传旅游分享海报
+     *
+     * @param uploadFile
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/upload/topbar-poster", method = RequestMethod.POST)
+    public RespBase uploadPoster2(UploadFile uploadFile) {
+
+        String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.POSTER2_DIRECTORY_NAME);
 
         return RespHelper.ok(url);
     }

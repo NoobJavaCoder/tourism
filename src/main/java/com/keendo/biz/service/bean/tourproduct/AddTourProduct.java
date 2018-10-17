@@ -8,6 +8,7 @@ public class AddTourProduct {
     private String title;
     private String coverImgUrl;
     private String posterUrl;
+    private String topPosterUrl;
     private String tourSummary;
     private Date departureTime;
     private Integer tourDay;
@@ -15,6 +16,15 @@ public class AddTourProduct {
     private Date deadline;
     private Integer maxParticipantNum;
     private String wxPubUrl;
+
+
+    public String getTopPosterUrl() {
+        return topPosterUrl;
+    }
+
+    public void setTopPosterUrl(String topPosterUrl) {
+        this.topPosterUrl = topPosterUrl;
+    }
 
     public String getPosterUrl() {
         return posterUrl;
