@@ -76,7 +76,7 @@ public class AppMyInfoController extends BaseController {
 
         Integer userId = getUserId();
         if(userId == null){
-            RespHelper.nologin();
+            return RespHelper.nologin();
         }
 
         UserInfoResp resp = userInfoService.getAppUserInfo(userId);
