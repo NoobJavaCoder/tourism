@@ -2,6 +2,7 @@ package com.keendo.biz.controller.admin;
 
 import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
+import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.controller.base.bean.IdReq;
 import com.keendo.biz.controller.base.bean.PageParamReq;
 import com.keendo.biz.model.TourProduct;
@@ -85,7 +86,7 @@ public class AdminTourProductController {
      */
     @ResponseBody
     @RequestMapping(value = "/upload/cover-img", method = RequestMethod.POST)
-    public RespBase addCoverImg(UploadFile uploadFile) {
+    public RespBase addCoverImg(UploadFile uploadFile) throws BizException {
 
         String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.COVER_DIRECTORY_NAME);
 

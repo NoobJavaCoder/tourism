@@ -1,5 +1,6 @@
 package com.keendo.biz.service;
 
+import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.mapper.TourProductMapper;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.bean.tourproduct.AddTourProduct;
@@ -7,12 +8,10 @@ import com.keendo.biz.service.bean.tourproduct.AdminTourProductItemResp;
 import com.keendo.biz.service.bean.tourproduct.AdminTourProductListItemResp;
 import com.keendo.biz.service.bean.tourproduct.TourProductItem;
 import com.keendo.biz.service.utils.BeanUtils;
-import com.keendo.biz.service.utils.FileUtil;
 import com.keendo.biz.service.utils.ListUtil;
 import com.keendo.biz.service.utils.TimeUtils;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
-import com.keendo.wxpay.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -128,7 +127,7 @@ public class TourProductService {
      * @param multipartFile
      * @return
      */
-    public String uploadPic(MultipartFile multipartFile, String directory) {
+    public String uploadPic(MultipartFile multipartFile, String directory) throws BizException {
 
         return uploadService.uploadPic(multipartFile, directory, String.valueOf(System.currentTimeMillis()));
     }

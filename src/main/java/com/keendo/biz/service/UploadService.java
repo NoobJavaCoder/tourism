@@ -1,9 +1,9 @@
 package com.keendo.biz.service;
 
+import com.keendo.architecture.exception.BizException;
 import com.keendo.architecture.utils.Log;
 import com.keendo.biz.service.utils.FileUtil;
 import com.keendo.biz.service.utils.JsonHelper;
-import com.keendo.wxpay.exception.BizException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,20 @@ public class UploadService {
 
     /**
      * 上传非敏感的图片
+     *
      * @param file
      * @param directory
      * @return
      */
-    public String uploadPic(MultipartFile file, String directory , String timeStampVal){
+    public String uploadPic(MultipartFile file, String directory, String timeStampVal) throws BizException {
 
-        if(file == null){
+        if (file == null) {
             throw new BizException("上传图片为空");
+        }
+
+        Long size = file.getSize();
+        if (Constants.MAX_SIZE.compareTo(size) < 0) {
+            throw new BizException("上传图片大小不可超过1M");
         }
 
         String originalFilename = file.getOriginalFilename();
@@ -40,9 +46,9 @@ public class UploadService {
 
         String cosPicUrl = null;
         try {
-            String pathJson = cosService.uploadFile(path , IOUtils.toByteArray(file.getInputStream()));
+            String pathJson = cosService.uploadFile(path, IOUtils.toByteArray(file.getInputStream()));
             String dataJson = JsonHelper.getStringFromJson(pathJson, "data");
-            cosPicUrl = JsonHelper.getStringFromJson(dataJson,"access_url");
+            cosPicUrl = JsonHelper.getStringFromJson(dataJson, "access_url");
         } catch (IOException e) {
             Log.e(e);
         }
@@ -53,19 +59,20 @@ public class UploadService {
 
     /**
      * 上传敏感的图片
+     *
      * @param file
      * @param directory
      * @return
      */
-    public String uploadSensitiveFile(MultipartFile file, String directory , String fileName){
+    public String uploadSensitiveFile(MultipartFile file, String directory, String fileName) {
 
         String path = this.connect(directory, fileName);
 
         String cosPicUrl = null;
         try {
-            String pathJson = cosService.uploadSensitiveFile(path , IOUtils.toByteArray(file.getInputStream()));
+            String pathJson = cosService.uploadSensitiveFile(path, IOUtils.toByteArray(file.getInputStream()));
             String dataJson = JsonHelper.getStringFromJson(pathJson, "data");
-            cosPicUrl = JsonHelper.getStringFromJson(dataJson,"access_url");
+            cosPicUrl = JsonHelper.getStringFromJson(dataJson, "access_url");
         } catch (IOException e) {
             Log.e(e);
         }
@@ -74,10 +81,9 @@ public class UploadService {
     }
 
 
+    private String connect(String directory, String fileName) {
 
-    private String connect(String directory  , String fileName){
-
-        if(directory.endsWith("/")){
+        if (directory.endsWith("/")) {
             String path = directory + fileName;
             return path;
         }
@@ -85,6 +91,11 @@ public class UploadService {
         return directory + "/" + fileName;
     }
 
+    private static class Constants {
+
+        private final static Long MAX_SIZE = 1048576L;//上传文件最大为1M
+
+    }
 
 
 }
