@@ -47,9 +47,18 @@ public class TourOrderService {
     @Autowired
     private OrderOptService orderOptService;
 
+    @Autowired
+    private UserIdempotentService userIdempotentService;
+
+
     //订单保留时间，超过则取消
     private final static Long ORDER_RETENTION_TIME = 15 * 60 * 1000L;
 
+    /**
+     * 得到我的订单详细
+     * @param tourOrderId
+     * @return
+     */
     public MyOrderDetail getMyOrderDetail(Integer tourOrderId){
 
         MyOrderDetail myOrderDetail = new MyOrderDetail();
@@ -91,7 +100,6 @@ public class TourOrderService {
             }
         }
 
-
         //订单人信息
         TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(tourOrderId);
 
@@ -119,61 +127,70 @@ public class TourOrderService {
      */
     public Integer addOrder(Integer userId , OrderUserDetail orderUserDetail ,Integer productId){
 
-        Integer tourOrderId  = transactionTemplate.execute(status -> {
+        Integer idempotentId = userIdempotentService.add(userId);
 
-            TourProduct tourProduct = tourProductService.getById(productId);
+        Integer tourOrderId = null;
+        try{
+             tourOrderId  = transactionTemplate.execute(status -> {
 
-            Integer state = tourProduct.getState();
-            if(!state.equals(TourProductService.Constants.ON_GOING_STATE)){
-                throw new BizException("该产品状态无法下单");
-            }
+                TourProduct tourProduct = tourProductService.getById(productId);
 
-            //检查自己是否已经下单
-            Boolean hasOrder = isHasOrder(productId, userId);
-
-            if(hasOrder){
-                throw new BizException("已经存在订单");
-            }
-
-            //添加订单
-            TourOrder tourOrder = new TourOrder();
-
-            tourOrder.setCreateTime(new Date());
-            tourOrder.setUserId(userId);
-            tourOrder.setTourProductId(productId);
-            tourOrder.setState(Constants.NOT_PAY_STATE);
-
-            Integer orderId = save(tourOrder);
-
-            //订单详细
-            TourOrderDetail tourOrderDetail = BeanUtil.copyBean(orderUserDetail, TourOrderDetail.class);
-            tourOrderDetail.setOrderId(orderId);
-            BigDecimal price = tourProduct.getPrice();
-            tourOrderDetail.setPrice(price);
-
-            tourOrderDetailService.save(tourOrderDetail);
-
-            //订单轨迹
-            orderOptService.add(orderId, null, Constants.NOT_PAY_STATE ,userId);
-
-            //检查是否满员
-            Integer hasPaidCount = countHasPaidByTourProductId(productId);
-            Integer unPaidCount = countUnPaidByTourProductId(productId);
-
-            Integer orderCount = hasPaidCount + unPaidCount;
-            Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
-
-            //如果满员则修改产品状态
-            if(maxParticipantNum.equals(orderCount)){
-                Integer fullStateResult = tourProductService.fullState(productId);
-
-                if(fullStateResult.equals(0)){
-                    throw new BizException("产品状态有误");
+                Integer state = tourProduct.getState();
+                if(!state.equals(TourProductService.Constants.ON_GOING_STATE)){
+                    throw new BizException("该产品状态无法下单");
                 }
-            }
 
-            return orderId;
-        });
+                //检查自己是否已经下单
+                Boolean hasOrder = isHasOrder(productId, userId);
+
+                if(hasOrder){
+                    throw new BizException("已经存在订单");
+                }
+
+                //添加订单
+                TourOrder tourOrder = new TourOrder();
+
+                tourOrder.setCreateTime(new Date());
+                tourOrder.setUserId(userId);
+                tourOrder.setTourProductId(productId);
+                tourOrder.setState(Constants.NOT_PAY_STATE);
+
+                Integer orderId = save(tourOrder);
+
+                //订单详细
+                TourOrderDetail tourOrderDetail = BeanUtil.copyBean(orderUserDetail, TourOrderDetail.class);
+                tourOrderDetail.setOrderId(orderId);
+                BigDecimal price = tourProduct.getPrice();
+                tourOrderDetail.setPrice(price);
+
+                tourOrderDetailService.save(tourOrderDetail);
+
+                //订单轨迹
+                orderOptService.add(orderId, null, Constants.NOT_PAY_STATE ,userId);
+
+                //检查是否满员
+                Integer hasPaidCount = countHasPaidByTourProductId(productId);
+                Integer unPaidCount = countUnPaidByTourProductId(productId);
+
+                Integer orderCount = hasPaidCount + unPaidCount;
+                Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
+
+                //如果满员则修改产品状态
+                if(maxParticipantNum.equals(orderCount)){
+                    Integer fullStateResult = tourProductService.fullState(productId);
+
+                    if(fullStateResult.equals(0)){
+                        throw new BizException("产品状态有误");
+                    }
+                }
+
+                return orderId;
+            });
+        }catch (Exception e){
+            Log.e(e);
+        }finally {
+            userIdempotentService.unlock(idempotentId);
+        }
 
         return tourOrderId;
     }

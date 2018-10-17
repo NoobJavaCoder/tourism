@@ -41,6 +41,7 @@ public class AppTourOrderController extends BaseController{
         if(orderUserDetail == null){
             throw new BizException("用户不能为空");
         }
+
         Integer productId = addTourOrderReq.getProductId();
         Integer orderId = tourOrderService.addOrder(userId, orderUserDetail, productId);
 
@@ -86,7 +87,34 @@ public class AppTourOrderController extends BaseController{
 
         List<MyOrderItem> myOrderItemList = tourOrderService.getMyOrderList(userId, startIndex, pageSize);
 
-
         return RespHelper.ok(myOrderItemList);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/get-detail", method = RequestMethod.POST)
+    public RespBase getMyOrderDetail(@RequestBody IdReq idReq){
+
+        Integer userId = getUserId();
+        if(userId == null){
+            return RespHelper.nologin();
+        }
+
+        Integer id = idReq.getId();
+        if(id == null){
+            return RespHelper.failed("订单不能为空");
+        }
+
+        TourOrder tourOrder = tourOrderService.getById(id);
+        if(tourOrder == null){
+            return RespHelper.failed("找不到该订单");
+        }
+
+        if(!tourOrder.getUserId().equals(userId)){
+            return RespHelper.failed("不属于当前的用户订单");
+        }
+
+        MyOrderDetail myOrderDetail = tourOrderService.getMyOrderDetail(id);
+
+        return RespHelper.ok(myOrderDetail);
     }
 }
