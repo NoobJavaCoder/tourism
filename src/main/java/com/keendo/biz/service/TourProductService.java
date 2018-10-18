@@ -3,15 +3,13 @@ package com.keendo.biz.service;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.mapper.TourProductMapper;
 import com.keendo.biz.model.TourProduct;
-import com.keendo.biz.service.bean.tourproduct.AddTourProduct;
-import com.keendo.biz.service.bean.tourproduct.AdminTourProductItemResp;
-import com.keendo.biz.service.bean.tourproduct.AdminTourProductListItemResp;
-import com.keendo.biz.service.bean.tourproduct.TourProductItem;
+import com.keendo.biz.service.bean.tourproduct.*;
 import com.keendo.biz.service.utils.BeanUtils;
 import com.keendo.biz.service.utils.ListUtil;
 import com.keendo.biz.service.utils.TimeUtils;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
+import com.keendo.user.service.utils.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +33,36 @@ public class TourProductService {
     @Autowired
     private UserService userService;
 
+
+    public TourProductItemDetail getAppTourProductDetail(Integer tourProductId){
+        TourProduct tourProduct = this.getById(tourProductId);
+
+        TourProductItemDetail tourProductItemDetail = BeanUtils.copyBean(tourProduct, TourProductItemDetail.class);
+
+        //已下单人数
+        Integer hasOrderedNum = tourOrderService.countByTourProductId(tourProductId);
+        tourProductItemDetail.setHasOrderedNum(hasOrderedNum);
+
+        //剩余人数
+        Integer maxParticipantNum = tourProduct.getMaxParticipantNum();//人数上限
+        tourProductItemDetail.setRemainNum(maxParticipantNum - hasOrderedNum);
+
+        //参与者头像
+        List<Integer> orderedUserIdList = tourOrderService.getOrderedUserIdList(tourProductId);
+        List<String> headImgList = new ArrayList<>();
+        if (ListUtil.isNotEmpty(orderedUserIdList)) {
+            for (Integer userId : orderedUserIdList) {
+                User user = userService.getById(userId);
+                if (user != null) {
+                    String headImg = user.getHeadImgUrl();
+                    headImgList.add(headImg);
+                }
+            }
+        }
+        tourProductItemDetail.setHeadImgList(headImgList);
+
+        return tourProductItemDetail;
+    }
 
     public List<TourProductItem> getAppTourProductItemList(Integer startIndex, Integer pageSize) {
         //未下架产品

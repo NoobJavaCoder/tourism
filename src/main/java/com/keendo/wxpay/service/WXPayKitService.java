@@ -1,6 +1,5 @@
 package com.keendo.wxpay.service;
 
-import com.keendo.wxpay.service.IMiniAppConfigService;
 import com.keendo.wxpay.bean.*;
 import com.keendo.wxpay.constant.WXPayConstants;
 import com.keendo.wxpay.exception.BizException;
@@ -171,11 +170,11 @@ public class WXPayKitService {
 
         Log.i("【OrderQuery】, response = {?}",response);
 
-        OrderQueryResp oqResp = XmlBeanUtil.toBeanWithCData(response, OrderQueryResp.class);
+        OrderQueryResp orderQueryResp = XmlBeanUtil.toBeanWithCData(response, OrderQueryResp.class);
 
-        if (WXPayConstants.SUCCESS.equals(oqResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(oqResp.getResultCode())) {
+        if (WXPayConstants.SUCCESS.equals(orderQueryResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(orderQueryResp.getResultCode())) {
 
-            return oqResp;
+            return orderQueryResp;
         } else {
 
             Log.e("orderQuery request fail , response = {?} ", response);
