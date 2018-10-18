@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by bint on 2018/9/10.
  */
-@RequestMapping("/user")
+@RequestMapping("/app/user")
 @RestController
 public class UserController extends BaseController {
 

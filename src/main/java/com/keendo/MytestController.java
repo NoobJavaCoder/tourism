@@ -50,8 +50,8 @@ public class MytestController {
 //        pr.setAmount(new BigDecimatl("100"));
 //        pr.setOpenId("asdhi32xx");
 //        payRecordService.update(pr);
-        List<TourProductItem> appTourProductItemList = tourProductService.getAppTourProductItemList(0, 10);
-        return RespHelper.ok(appTourProductItemList);
+        TourProductItemDetail appTourProductDetail = tourProductService.getAppTourProductDetail(3);
+        return RespHelper.ok(appTourProductDetail);
     }
 
 
