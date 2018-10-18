@@ -37,13 +37,8 @@ public class AppTourOrderController extends BaseController{
             return RespHelper.nologin();
         }
 
-        OrderUserDetail orderUserDetail = addTourOrderReq.getOrderUserDetail();
-        if(orderUserDetail == null){
-            throw new BizException("用户不能为空");
-        }
-
         Integer productId = addTourOrderReq.getProductId();
-        Integer orderId = tourOrderService.addOrder(userId, orderUserDetail, productId);
+        Integer orderId = tourOrderService.addOrder(userId, productId);
 
         return RespHelper.ok(orderId);
     }
