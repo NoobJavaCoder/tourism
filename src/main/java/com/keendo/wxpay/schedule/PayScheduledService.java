@@ -67,13 +67,9 @@ public class PayScheduledService {
             String orderSn = record.getOrderSn();//系统订单号
             req.setOutTradeNo(orderSn);
 
-            String sign = null;
-            try {
-                String key = miniAppPayConfigService.getMchKey();
-                sign = WXPayUtil.getSign(req, key);
-            } catch (Exception e) {
-                Log.e(e);
-            }
+            String key = miniAppPayConfigService.getMchKey();
+            String sign = WXPayUtil.getSign(req, key);
+
             req.setSign(sign);
 
             OrderQueryResp orderQueryResp = wxPayKitService.queryOrder(req);
