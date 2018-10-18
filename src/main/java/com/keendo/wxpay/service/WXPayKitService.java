@@ -38,9 +38,9 @@ public class WXPayKitService {
      * 支付
      *
      * @param openId:付款方用户openId
-     * @param body:支付信息
+     * @param body:支付信息,商品描述 例:腾讯充值中心-QQ会员充值
      * @param amount:金额(传入金额单位为元)
-     * @param orderSn:系统订单编号
+     * @param orderSn:系统订单编号(32位以内,系统唯一,字母数字的字符串)
      */
     public PaySignature pay(String openId, String body, BigDecimal amount, String orderSn) throws Exception {
 

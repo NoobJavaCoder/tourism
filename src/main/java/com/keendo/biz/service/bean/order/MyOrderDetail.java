@@ -25,6 +25,16 @@ public class MyOrderDetail {
 
     private Integer tourProductId;
 
+    private String orderSn;
+
+    public String getOrderSn() {
+        return orderSn;
+    }
+
+    public void setOrderSn(String orderSn) {
+        this.orderSn = orderSn;
+    }
+
     public Integer getTourProductId() {
         return tourProductId;
     }

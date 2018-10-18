@@ -7,13 +7,15 @@ import com.keendo.biz.model.*;
 import com.keendo.biz.service.bean.order.AdminProductOrderItemResp;
 import com.keendo.biz.service.bean.order.MyOrderDetail;
 import com.keendo.biz.service.bean.order.MyOrderItem;
+import com.keendo.biz.service.bean.order.OrderUserDetail;
+import com.keendo.biz.service.utils.RandomUtil;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.user.service.utils.BeanUtil;
+import com.keendo.wxpay.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import com.keendo.biz.service.bean.order.OrderUserDetail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -146,6 +148,23 @@ public class TourOrderService {
         orderUserDetail.setRealName(realName);
 
         return addOrder(productId, orderUserDetail, productId);
+    }
+
+    /**
+     * 生成唯一的系统订单号
+     * 时间戳 + 随机数 = 32位字符串
+     * @return
+     */
+    private String createOrderSn(){
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        Integer remainLen = Constants.ORDER_SN_LENGTH - timeStamp.length();
+        String radomNumber = RandomUtil.getRandomString(remainLen);
+        return timeStamp + radomNumber;
+    }
+
+    public static void main(String []args){
+        String s = String.valueOf(System.currentTimeMillis());
+        System.out.println(s);
     }
 
     /**
@@ -298,6 +317,15 @@ public class TourOrderService {
         return tourOrderMapper.selectById(id);
     }
 
+    /**
+     * 根据系统唯一订单号获取订单对象
+     * @param orderSn
+     * @return
+     */
+    public TourOrder getByOrderSn(String orderSn){
+        return tourOrderMapper.selectByOrderSn(orderSn);
+    }
+
     private List<TourOrder> getByProductId(Integer tourProductId ,Integer startIndex ,Integer pageSize){
         return tourOrderMapper.selectByTourProductId(tourProductId, startIndex, pageSize);
     }
@@ -310,15 +338,17 @@ public class TourOrderService {
 
     /**
      * 付款成功
-     * @param orderId
+     * @param orderSn:系统唯一订单号
      */
-    public void paySuccess(Integer orderId){
+    public void paySuccess(String orderSn){
 
         transactionTemplate.execute(status -> {
 
-            updateByFromState(orderId, Constants.NOT_PAY_STATE, Constants.HAS_PAY_STATE);
+            TourOrder tourOrder = getByOrderSn(orderSn);
 
-            TourOrder tourOrder = getById(orderId);
+            Integer orderId = tourOrder.getId();
+
+            updateByFromState(orderId, Constants.NOT_PAY_STATE, Constants.HAS_PAY_STATE);
 
             Integer userId = tourOrder.getUserId();
 
@@ -387,11 +417,11 @@ public class TourOrderService {
 
     /**
      * 得到订单的花费
-     * @param orderId
+     * @param orderSn:系统订单号
      * @return
      */
-    public BigDecimal getFeeByOrderId(Integer orderId){
-        TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(orderId);
+    public BigDecimal getFeeByOrderId(String orderSn){
+        TourOrderDetail orderDetail = tourOrderDetailService.getByOrderSn(orderSn);
 
         BigDecimal price = orderDetail.getPrice();
 
@@ -400,12 +430,12 @@ public class TourOrderService {
 
     /**
      * 订单是否已经付款
-     * @param tourOrderId
+     * @param orderSn:系统订单号
      * @return
      */
-    public Boolean isOrderPaid(Integer tourOrderId){
+    public Boolean isOrderPaid(String orderSn){
 
-        TourOrder tourOrder = getById(tourOrderId);
+        TourOrder tourOrder = getByOrderSn(orderSn);
 
         if(tourOrder.getState().equals(Constants.HAS_PAY_STATE)){
             return true;
@@ -532,5 +562,7 @@ public class TourOrderService {
         private final static Integer HAS_PAY_STATE = 1;//已经付款
         private final static Integer CANCEL_STATE = 2;//取消
         private final static Integer HAS_RETURN_STATE = 3;//已经退款
+
+        private final static Integer ORDER_SN_LENGTH = 32;//系统订单号位数
     }
 }

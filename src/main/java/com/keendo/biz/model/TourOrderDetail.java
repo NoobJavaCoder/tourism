@@ -11,6 +11,15 @@ public class TourOrderDetail {
     private Integer gender;
     private Integer orderId;
     private BigDecimal price;
+    private String orderSn;
+
+    public String getOrderSn() {
+        return orderSn;
+    }
+
+    public void setOrderSn(String orderSn) {
+        this.orderSn = orderSn;
+    }
 
     public BigDecimal getPrice() {
         return price;

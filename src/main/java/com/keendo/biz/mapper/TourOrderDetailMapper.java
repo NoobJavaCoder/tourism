@@ -10,4 +10,6 @@ public interface TourOrderDetailMapper {
     int insert(TourOrderDetail tourOrderDetail);
 
     TourOrderDetail selectByOrderId(Integer orderId);
+
+    TourOrderDetail selectByOrderSn(String orderSn);
 }

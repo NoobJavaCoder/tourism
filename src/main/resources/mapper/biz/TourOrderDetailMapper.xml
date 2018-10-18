@@ -8,17 +8,18 @@
         <result column="gender" property="gender" jdbcType="INTEGER" />
         <result column="order_id" property="orderId" jdbcType="INTEGER" />
         <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="order_sn" property="orderSn" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List" >
-        `id` , `phone_number` , `id_card_number` , `real_name` , `gender` , `order_id`  , `price`
+        `id` , `phone_number` , `id_card_number` , `real_name` , `gender` , `order_id`  , `price` ,`order_sn`
     </sql>
 
     <insert id="insert" parameterType="com.keendo.biz.model.TourOrderDetail">
         insert into
             e_tour_order_detail
-                (`phone_number` , `id_card_number` , `real_name` , `gender` , `order_id` , `price` )
-        values (#{phoneNumber} ,#{idCardNumber} ,#{realName} ,#{gender} ,#{orderId} ,#{price} )
+                (`phone_number` , `id_card_number` , `real_name` , `gender` , `order_id` , `price` ,`order_sn`)
+        values (#{phoneNumber} ,#{idCardNumber} ,#{realName} ,#{gender} ,#{orderId} ,#{price} ,#{orderSn} )
     </insert>
 
     <select id="selectByOrderId" parameterType="map" resultMap="baseResultMap">
@@ -28,6 +29,15 @@
         e_tour_order_detail
         WHERE
             order_id = #{orderId}
+    </select>
+
+    <select id="selectByOrderSn" parameterType="map" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_tour_order_detail
+        WHERE
+        order_sn = #{orderSn}
     </select>
 
 

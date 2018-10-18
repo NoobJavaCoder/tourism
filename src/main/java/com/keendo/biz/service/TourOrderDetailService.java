@@ -21,4 +21,13 @@ public class TourOrderDetailService {
     public TourOrderDetail getByOrderId(Integer orderId){
         return tourOrderDetailMapper.selectByOrderId(orderId);
     }
+
+    /**
+     * 根据系统订单号获取订单详细
+     * @param orderSn:系统订单号
+     * @return
+     */
+    public TourOrderDetail getByOrderSn(String orderSn){
+        return tourOrderDetailMapper.selectByOrderSn(orderSn);
+    }
 }
