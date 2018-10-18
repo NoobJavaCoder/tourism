@@ -38,17 +38,18 @@ public class WXPayKitService {
      * 支付
      *
      * @param openId:付款方用户openId
-     * @param body:支付信息,商品描述                      例:腾讯充值中心-QQ会员充值
+     * @param body:支付信息,商品描述   例:腾讯充值中心-QQ会员充值
      * @param amount:金额(传入金额单位为元)
      * @param orderSn:系统订单编号(32位以内,系统唯一,字母数字的字符串)
+     * @return : 小程序端拉起支付需要的参数
      */
-    public PaySignature pay(String openId, String body, BigDecimal amount, String orderSn) {
+    public MiniAppPayParam pay(String openId, String body, BigDecimal amount, String orderSn) {
 
         UnifiedorderParam unifiedorderParam = this.createUnifiedorderParam(openId, body, amount, orderSn);
 
-        PaySignature paySignature = transactionTemplate.execute(new TransactionCallback<PaySignature>() {
+        MiniAppPayParam miniAppPayParam = transactionTemplate.execute(new TransactionCallback<MiniAppPayParam>() {
             @Override
-            public PaySignature doInTransaction(TransactionStatus transactionStatus) {
+            public MiniAppPayParam doInTransaction(TransactionStatus transactionStatus) {
 
                 // 支付记录表中新增一条支付记录
                 PayRecord payRecord = new PayRecord();
@@ -74,13 +75,14 @@ public class WXPayKitService {
                 //2 构建返回参数
                 String appId = miniAppPayConfigService.getAppId();
                 String nonceStr = WXPayUtil.createNonceStr();
-                PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
 
-                return paySignature;
+                MiniAppPayParam miniAppPayParam = createMiniAppPayParam(appId, nonceStr, prepayId);
+
+                return miniAppPayParam;
             }
         });
 
-        return paySignature;
+        return miniAppPayParam;
     }
 
     /**
@@ -119,24 +121,12 @@ public class WXPayKitService {
         String totalFee = String.valueOf(WXPayUtil.getTotalFee(amount));
         unifiedorderParam.setTotalFee(totalFee);
 
-        String createIp;
-        try {
-            createIp = WXPayUtil.getCreateIp();
-            unifiedorderParam.setSpBillCreateIp(createIp);
-        } catch (Exception e) {
-            Log.e(e);
-            e.printStackTrace();
-        }
+        String createIp = WXPayUtil.getCreateIp();
+        unifiedorderParam.setSpBillCreateIp(createIp);
 
-        String sign;
-        try {
-            String key = miniAppPayConfigService.getMchKey();
-            sign = WXPayUtil.getSign(unifiedorderParam, key);
-            unifiedorderParam.setSign(sign);
-        } catch (Exception e) {
-            Log.e(e);
-            e.printStackTrace();
-        }
+        String key = miniAppPayConfigService.getMchKey();
+        String sign = WXPayUtil.getSign(unifiedorderParam, key);
+        unifiedorderParam.setSign(sign);
 
         return unifiedorderParam;
     }
@@ -156,10 +146,9 @@ public class WXPayKitService {
 
         System.out.println(response);
 
-        Log.i("【WX Pay】，response = {?}",response);
+        Log.i("【WX Pay】，response = {?}", response);
 
-        //UnifiedorderResp uoResp = XmlBeanUtil.toBeanWithCData(response, UnifiedorderResp.class);
-        UnifiedorderResp uoResp = XmlUtil.converyToJavaBean(response, UnifiedorderResp.class);
+        UnifiedorderResp uoResp = XmlBeanUtil.toBeanWithCData(response, UnifiedorderResp.class);
 
         if (WXPayConstants.SUCCESS.equals(uoResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(uoResp.getResultCode())) {
 
@@ -208,7 +197,7 @@ public class WXPayKitService {
      * @throws Exception
      */
     @Transactional
-    public WXNotifyResp callback(String xmlRet) throws Exception {
+    public WXNotifyResp callback(String xmlRet) {
         String key = miniAppPayConfigService.getMchKey();
 
         Boolean signValid = WXPayUtil.checkSign(xmlRet, key);
@@ -260,6 +249,25 @@ public class WXPayKitService {
 
             return WXNotifyResp.fail();
         }
+    }
+
+    /**
+     * 生成小程序支付参数对象,传递给小程序端拉起微信支付
+     *
+     * @return
+     */
+    private  MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId) {
+        PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
+
+        MiniAppPayParam miniAppPayParam = BeanUtil.copyBean(paySignature, MiniAppPayParam.class);
+
+        String key = miniAppPayConfigService.getMchKey();
+
+        String paySign = WXPayUtil.getSign(paySignature, key);
+
+        miniAppPayParam.setPaySign(paySign);
+
+        return miniAppPayParam;
     }
 
     /**

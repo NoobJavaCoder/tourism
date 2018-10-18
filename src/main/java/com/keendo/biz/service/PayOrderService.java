@@ -3,6 +3,7 @@ package com.keendo.biz.service;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
+import com.keendo.wxpay.bean.MiniAppPayParam;
 import com.keendo.wxpay.bean.PaySignature;
 import com.keendo.wxpay.service.WXPayKitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +20,16 @@ public class PayOrderService {
     @Autowired
     private UserService userService;
 
-    public PaySignature payOrder(Integer userId, BigDecimal amount, String orderSn) {
+    public MiniAppPayParam payOrder(Integer userId, BigDecimal amount, String orderSn) {
 
         //openid body amount orderSn
         String openId = this.getOpenIdByUserId(userId);
 
         String body = this.getPayBody();
 
-        PaySignature paySignature = wxPayKitService.pay(openId, body, amount, orderSn);
+        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, amount, orderSn);
 
-        return paySignature;
+        return miniAppPayParam;
     }
 
     /**
