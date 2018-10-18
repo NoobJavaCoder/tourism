@@ -9,6 +9,7 @@ import com.keendo.user.service.MiniAppUserinfoService;
 import com.keendo.user.service.UserService;
 import com.keendo.user.service.bean.user.EncryptedUserinfo;
 import com.keendo.user.service.bean.user.LoginRet;
+import com.keendo.user.service.bean.user.UserInfoVO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,6 +85,24 @@ public class UserController extends BaseController {
         ret.put("token", token);
 
         return RespHelper.ok(ret);
+    }
+
+
+    /**
+     * 获取用户信息
+     *
+     * @return
+     */
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
+    public RespBase getInfo() {
+        Integer userId = getUserId();
+        if (userId == null) {
+            return RespHelper.nologin();
+        }
+
+        UserInfoVO userInfoVO = userService.getUserInfoVO(userId);
+
+        return RespHelper.ok(userInfoVO);
     }
 
 
