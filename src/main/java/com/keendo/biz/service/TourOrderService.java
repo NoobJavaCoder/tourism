@@ -200,6 +200,9 @@ public class TourOrderService {
                 tourOrder.setTourProductId(productId);
                 tourOrder.setState(Constants.NOT_PAY_STATE);
 
+                 String orderSn = this.createOrderSn();
+                 tourOrder.setOrderSn(orderSn);
+
                 Integer orderId = save(tourOrder);
 
                 //订单详细

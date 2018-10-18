@@ -50,8 +50,9 @@ public class UserInfoService {
      */
     public UserInfoResp getAppUserInfo(Integer userId) {
         UserInfo userInfo = this.getByUserId(userId);
-        if (userInfo == null) {
-            throw new BizException("用户信息不存在");
+
+        if(userInfo == null){
+            return null;
         }
         UserInfoResp userInfoResp = BeanUtils.copyBean(userInfo, UserInfoResp.class);
         return userInfoResp;
