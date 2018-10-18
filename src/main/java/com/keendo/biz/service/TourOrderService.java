@@ -58,10 +58,11 @@ public class TourOrderService {
 
     /**
      * 得到我的订单详细
+     *
      * @param tourOrderId
      * @return
      */
-    public MyOrderDetail getMyOrderDetail(Integer tourOrderId){
+    public MyOrderDetail getMyOrderDetail(Integer tourOrderId) {
 
         MyOrderDetail myOrderDetail = new MyOrderDetail();
 
@@ -91,13 +92,13 @@ public class TourOrderService {
 
         //订单轨迹
         List<OrderOpt> orderOptList = orderOptService.getListByOrderId(tourOrderId);
-        for(OrderOpt orderOpt : orderOptList){
+        for (OrderOpt orderOpt : orderOptList) {
             Integer toState = orderOpt.getToState();
-            if(toState.equals(Constants.NOT_PAY_STATE)){
+            if (toState.equals(Constants.NOT_PAY_STATE)) {
                 myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
             }
 
-            if(toState.equals(Constants.HAS_PAY_STATE)){
+            if (toState.equals(Constants.HAS_PAY_STATE)) {
                 myOrderDetail.setOrderPayTime(orderOpt.getCreateTime());
             }
         }
@@ -122,14 +123,15 @@ public class TourOrderService {
 
     /**
      * 新增订单
+     *
      * @param userId
      * @param productId
      * @return
      */
-    public Integer addOrder(Integer userId ,Integer productId){
+    public Integer addOrder(Integer userId, Integer productId) {
         UserInfo userInfo = userInfoService.getByUserId(userId);
 
-        if(userInfo == null){
+        if (userInfo == null) {
             throw new BizException("缺乏用户资料");
         }
 
@@ -153,9 +155,10 @@ public class TourOrderService {
     /**
      * 生成唯一的系统订单号
      * 时间戳 + 随机数 = 32位字符串
+     *
      * @return
      */
-    private String createOrderSn(){
+    private String createOrderSn() {
         String timeStamp = String.valueOf(System.currentTimeMillis());
         Integer remainLen = Constants.ORDER_SN_LENGTH - timeStamp.length();
         String radomNumber = RandomUtil.getRandomString(remainLen);
@@ -165,30 +168,31 @@ public class TourOrderService {
 
     /**
      * 新增订单
+     *
      * @param userId
      * @param orderUserDetail
      * @param productId
      * @return
      */
-    public Integer addOrder(Integer userId , OrderUserDetail orderUserDetail ,Integer productId){
+    public Integer addOrder(Integer userId, OrderUserDetail orderUserDetail, Integer productId) {
 
         Integer idempotentId = userIdempotentService.add(userId);
 
         Integer tourOrderId = null;
-        try{
-             tourOrderId  = transactionTemplate.execute(status -> {
+        try {
+            tourOrderId = transactionTemplate.execute(status -> {
 
                 TourProduct tourProduct = tourProductService.getById(productId);
 
                 Integer state = tourProduct.getState();
-                if(!state.equals(TourProductService.Constants.ON_GOING_STATE)){
+                if (!state.equals(TourProductService.Constants.ON_GOING_STATE)) {
                     throw new BizException("该产品状态无法下单");
                 }
 
                 //检查自己是否已经下单
                 Boolean hasOrder = isHasOrder(productId, userId);
 
-                if(hasOrder){
+                if (hasOrder) {
                     throw new BizException("已经存在订单");
                 }
 
@@ -200,8 +204,8 @@ public class TourOrderService {
                 tourOrder.setTourProductId(productId);
                 tourOrder.setState(Constants.NOT_PAY_STATE);
 
-                 String orderSn = this.createOrderSn();
-                 tourOrder.setOrderSn(orderSn);
+                String orderSn = this.createOrderSn();
+                tourOrder.setOrderSn(orderSn);
 
                 Integer orderId = save(tourOrder);
 
@@ -210,11 +214,12 @@ public class TourOrderService {
                 tourOrderDetail.setOrderId(orderId);
                 BigDecimal price = tourProduct.getPrice();
                 tourOrderDetail.setPrice(price);
+                tourOrderDetail.setOrderSn(orderSn);
 
                 tourOrderDetailService.save(tourOrderDetail);
 
                 //订单轨迹
-                orderOptService.add(orderId, null, Constants.NOT_PAY_STATE ,userId);
+                orderOptService.add(orderId, null, Constants.NOT_PAY_STATE, userId);
 
                 //检查是否满员
                 Integer hasPaidCount = countHasPaidByTourProductId(productId);
@@ -224,20 +229,20 @@ public class TourOrderService {
                 Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
 
                 //如果满员则修改产品状态
-                if(maxParticipantNum.equals(orderCount)){
+                if (maxParticipantNum.equals(orderCount)) {
                     Integer fullStateResult = tourProductService.fullState(productId);
 
-                    if(fullStateResult.equals(0)){
+                    if (fullStateResult.equals(0)) {
                         throw new BizException("产品状态有误");
                     }
                 }
 
                 return orderId;
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(e);
             throw e;
-        }finally {
+        } finally {
             userIdempotentService.unlock(idempotentId);
         }
 
@@ -247,17 +252,18 @@ public class TourOrderService {
 
     /**
      * 通过产品ID获得对应的订单
+     *
      * @param tourProductId
      * @param startIndex
      * @param pageSize
      * @return
      */
-    public List<AdminProductOrderItemResp> getByTourProductIdPage(Integer tourProductId , Integer startIndex , Integer pageSize){
+    public List<AdminProductOrderItemResp> getByTourProductIdPage(Integer tourProductId, Integer startIndex, Integer pageSize) {
         List<TourOrder> tourOrderList = getByProductId(tourProductId, startIndex, pageSize);
 
         List<AdminProductOrderItemResp> adminProductOrderItemRespList = new ArrayList<>();
 
-        for(TourOrder tourOrder : tourOrderList){
+        for (TourOrder tourOrder : tourOrderList) {
             AdminProductOrderItemResp adminOrderItemResp = new AdminProductOrderItemResp();
 
             Integer userId = tourOrder.getUserId();
@@ -300,36 +306,37 @@ public class TourOrderService {
         return adminProductOrderItemRespList;
     }
 
-    public Integer countByTourProductId(Integer tourProductId){
+    public Integer countByTourProductId(Integer tourProductId) {
         return tourOrderMapper.countByTourProductId(tourProductId);
     }
 
-    public Integer countUnPaidByTourProductId(Integer tourProductId){
-        return tourOrderMapper.countByTourProductIdAndState(tourProductId,Constants.NOT_PAY_STATE);
+    public Integer countUnPaidByTourProductId(Integer tourProductId) {
+        return tourOrderMapper.countByTourProductIdAndState(tourProductId, Constants.NOT_PAY_STATE);
     }
 
-    public Integer countHasPaidByTourProductId(Integer tourProductId){
-        return tourOrderMapper.countByTourProductIdAndState(tourProductId,Constants.HAS_PAY_STATE);
+    public Integer countHasPaidByTourProductId(Integer tourProductId) {
+        return tourOrderMapper.countByTourProductIdAndState(tourProductId, Constants.HAS_PAY_STATE);
     }
 
-    public TourOrder getById(Integer id){
+    public TourOrder getById(Integer id) {
         return tourOrderMapper.selectById(id);
     }
 
     /**
      * 根据系统唯一订单号获取订单对象
+     *
      * @param orderSn
      * @return
      */
-    public TourOrder getByOrderSn(String orderSn){
+    public TourOrder getByOrderSn(String orderSn) {
         return tourOrderMapper.selectByOrderSn(orderSn);
     }
 
-    private List<TourOrder> getByProductId(Integer tourProductId ,Integer startIndex ,Integer pageSize){
+    private List<TourOrder> getByProductId(Integer tourProductId, Integer startIndex, Integer pageSize) {
         return tourOrderMapper.selectByTourProductId(tourProductId, startIndex, pageSize);
     }
 
-    private Integer save(TourOrder tourOrder){
+    private Integer save(TourOrder tourOrder) {
         tourOrderMapper.insert(tourOrder);
 
         return tourOrder.getId();
@@ -337,9 +344,10 @@ public class TourOrderService {
 
     /**
      * 付款成功
+     *
      * @param orderSn:系统唯一订单号
      */
-    public void paySuccess(String orderSn){
+    public void paySuccess(String orderSn) {
 
         transactionTemplate.execute(status -> {
 
@@ -359,16 +367,16 @@ public class TourOrderService {
     }
 
 
-    private Boolean isHasOrder(Integer productId ,Integer userId){
+    private Boolean isHasOrder(Integer productId, Integer userId) {
         List<TourOrder> tourOrderList = getByProductIdAndUserId(productId, userId);
 
-        for(TourOrder tourOrder : tourOrderList){
+        for (TourOrder tourOrder : tourOrderList) {
             Integer state = tourOrder.getState();
-            if(state.equals(Constants.NOT_PAY_STATE)){
+            if (state.equals(Constants.NOT_PAY_STATE)) {
                 return true;
             }
 
-            if(state.equals(Constants.HAS_PAY_STATE)){
+            if (state.equals(Constants.HAS_PAY_STATE)) {
                 return true;
             }
         }
@@ -376,25 +384,26 @@ public class TourOrderService {
         return false;
     }
 
-    private Integer updateByFromState(Integer orderId ,Integer fromState ,Integer toState){
-        return tourOrderMapper.updateState(orderId ,fromState ,toState);
+    private Integer updateByFromState(Integer orderId, Integer fromState, Integer toState) {
+        return tourOrderMapper.updateState(orderId, fromState, toState);
     }
 
 
     /**
      * 取消订单
+     *
      * @param orderId
      */
-    public void cancelOrder(Integer orderId ,Integer userId){
+    public void cancelOrder(Integer orderId, Integer userId) {
 
         TourOrder tourOrder = getById(orderId);
-        if(tourOrder == null){
+        if (tourOrder == null) {
             throw new BizException("找不到该订单");
         }
 
         Integer tourOrderUserId = tourOrder.getUserId();
 
-        if(!tourOrderUserId.equals(userId)){
+        if (!tourOrderUserId.equals(userId)) {
             throw new BizException("用户有误");
         }
 
@@ -405,7 +414,7 @@ public class TourOrderService {
         transactionTemplate.execute(status -> {
 
             Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.CANCEL_STATE);
-            if(updateResult == 0){
+            if (updateResult == 0) {
                 throw new BizException("取消订单失败");
             }
 
@@ -416,10 +425,11 @@ public class TourOrderService {
 
     /**
      * 得到订单的花费
+     *
      * @param orderSn:系统订单号
      * @return
      */
-    public BigDecimal getFeeByOrderId(String orderSn){
+    public BigDecimal getFeeByOrderId(String orderSn) {
         TourOrderDetail orderDetail = tourOrderDetailService.getByOrderSn(orderSn);
 
         BigDecimal price = orderDetail.getPrice();
@@ -429,14 +439,15 @@ public class TourOrderService {
 
     /**
      * 订单是否已经付款
+     *
      * @param orderSn:系统订单号
      * @return
      */
-    public Boolean isOrderPaid(String orderSn){
+    public Boolean isOrderPaid(String orderSn) {
 
         TourOrder tourOrder = getByOrderSn(orderSn);
 
-        if(tourOrder.getState().equals(Constants.HAS_PAY_STATE)){
+        if (tourOrder.getState().equals(Constants.HAS_PAY_STATE)) {
             return true;
         }
 
@@ -446,7 +457,7 @@ public class TourOrderService {
     /**
      * 取消未付款的订单
      */
-    public void cancelUnPaidTourOrder(){
+    public void cancelUnPaidTourOrder() {
         Long currentTimeMillis = System.currentTimeMillis();
         Long time = currentTimeMillis - ORDER_RETENTION_TIME;
 
@@ -454,12 +465,12 @@ public class TourOrderService {
         updateByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.CANCEL_STATE, date);
     }
 
-    private Integer updateByStateAndCreateTime(Integer fromState ,Integer toState ,Date createTime){
+    private Integer updateByStateAndCreateTime(Integer fromState, Integer toState, Date createTime) {
         Log.i("cancel tourOrder that is unPaid.");
 
-        List<TourOrder> tourOrderList = getByStateAndCreateTime(fromState ,createTime);
+        List<TourOrder> tourOrderList = getByStateAndCreateTime(fromState, createTime);
 
-        for(TourOrder tourOrder : tourOrderList){
+        for (TourOrder tourOrder : tourOrderList) {
 
             transactionTemplate.execute(status -> {
                 Integer id = tourOrder.getId();
@@ -472,58 +483,60 @@ public class TourOrderService {
 
         }
 
-        if(tourOrderList == null){
+        if (tourOrderList == null) {
             return 0;
-        }else {
+        } else {
             return tourOrderList.size();
         }
     }
 
-    public List<TourOrder> getByStateAndCreateTime(Integer state ,Date createTime){
+    public List<TourOrder> getByStateAndCreateTime(Integer state, Date createTime) {
 
         return tourOrderMapper.selectByStateAndCreateTime(state, createTime);
     }
 
-    private List<TourOrder> getByProductIdAndUserId(Integer tourOrder ,Integer userId){
-        return tourOrderMapper.selectByProductIdAndUserId(tourOrder ,userId);
+    private List<TourOrder> getByProductIdAndUserId(Integer tourOrder, Integer userId) {
+        return tourOrderMapper.selectByProductIdAndUserId(tourOrder, userId);
     }
 
     /**
      * 根据旅游产品id查询已经下订单的用户的id列表,limit 3人
+     *
      * @param tourProductId:旅游产品id
      * @return
      */
-    public List<Integer> getOrderedUserIdList(Integer tourProductId){
-        return tourOrderMapper.selectOrderedUserIdList(tourProductId,Constants.NOT_PAY_STATE,Constants.HAS_PAY_STATE);
+    public List<Integer> getOrderedUserIdList(Integer tourProductId) {
+        return tourOrderMapper.selectOrderedUserIdList(tourProductId, Constants.NOT_PAY_STATE, Constants.HAS_PAY_STATE);
     }
-
 
 
     /**
      * 通过用户id获取分页
+     *
      * @param userId
      * @param startIndex
      * @param pageSize
      * @return
      */
-    private List<TourOrder> getPageByUserId(Integer userId ,Integer startIndex ,Integer pageSize){
+    private List<TourOrder> getPageByUserId(Integer userId, Integer startIndex, Integer pageSize) {
         return tourOrderMapper.selectPageBydAndUserId(userId, startIndex, pageSize);
     }
 
     /**
      * 获取我的订单列表
+     *
      * @param userId
      * @param startIndex
      * @param pageSize
      * @return
      */
-    public List<MyOrderItem> getMyOrderList(Integer userId ,Integer startIndex ,Integer pageSize){
+    public List<MyOrderItem> getMyOrderList(Integer userId, Integer startIndex, Integer pageSize) {
 
         List<MyOrderItem> myOrderItemList = new ArrayList<>();
 
         List<TourOrder> tourOrderList = getPageByUserId(userId, startIndex, pageSize);
 
-        for(TourOrder tourOrder : tourOrderList){
+        for (TourOrder tourOrder : tourOrderList) {
             MyOrderItem myOrderItem = new MyOrderItem();
 
             Integer orderId = tourOrder.getId();
@@ -556,7 +569,7 @@ public class TourOrderService {
         return myOrderItemList;
     }
 
-    private static class Constants{
+    private static class Constants {
         private final static Integer NOT_PAY_STATE = 0;//未付款
         private final static Integer HAS_PAY_STATE = 1;//已经付款
         private final static Integer CANCEL_STATE = 2;//取消
