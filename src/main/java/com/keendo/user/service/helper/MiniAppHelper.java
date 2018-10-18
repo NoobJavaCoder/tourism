@@ -4,7 +4,7 @@ import com.keendo.architecture.exception.BizException;
 import com.keendo.architecture.utils.Log;
 import com.keendo.user.sdk.wx.util.HttpsHelper;
 import com.keendo.user.sdk.wx.util.WxApiUrlUtil;
-import com.keendo.user.service.IMiniAppService;
+import com.keendo.user.service.IMiniAppConfigService;
 import com.keendo.user.service.helper.bean.LoginVerifyInfo;
 import com.keendo.user.service.utils.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class MiniAppHelper {
 
     @Autowired
-    private IMiniAppService miniAppService;
+    private IMiniAppConfigService miniAppUserConfigService;
 
     /**
      * 小程序用户登录,通过code获取openId,unionId,session_key
@@ -36,9 +36,9 @@ public class MiniAppHelper {
      * @return
      */
     public LoginVerifyInfo fetchLoginVerifyInfo(String jsCode) throws BizException {
-        String appId = miniAppService.getAppId();
+        String appId = miniAppUserConfigService.getAppId();
 
-        String secret = miniAppService.getSecret();
+        String secret = miniAppUserConfigService.getSecret();
 
         String fetchLoginVerifyInfoUrl = this.getfetchLoginVerifyUrl(appId, secret, jsCode);
 

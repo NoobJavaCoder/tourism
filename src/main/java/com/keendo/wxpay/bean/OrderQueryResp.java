@@ -28,6 +28,18 @@ public class OrderQueryResp {
     @XStreamAlias("trade_state")
     private String tradeState;
 
+    @Override
+    public String toString() {
+        return "OrderQueryResp{" +
+                "returnCode='" + returnCode + '\'' +
+                ", resultCode='" + resultCode + '\'' +
+                ", openId='" + openId + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", outTradeNo='" + outTradeNo + '\'' +
+                ", timeEnd='" + timeEnd + '\'' +
+                ", tradeState='" + tradeState + '\'' +
+                '}';
+    }
 
     public String getReturnCode() {
         return returnCode;

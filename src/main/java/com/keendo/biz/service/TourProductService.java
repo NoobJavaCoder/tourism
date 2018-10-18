@@ -127,7 +127,7 @@ public class TourProductService {
      * @param multipartFile
      * @return
      */
-    public String uploadPic(MultipartFile multipartFile, String directory) throws BizException {
+    public String uploadPic(MultipartFile multipartFile, String directory) {
 
         return uploadService.uploadPic(multipartFile, directory, String.valueOf(System.currentTimeMillis()));
     }

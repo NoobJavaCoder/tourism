@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * 统一下单请求参数
  */
-public class UnifiedorderReq {
+public class UnifiedorderParam {
     /*小程序appId*/
     @XStreamAlias("appid")
     private String appId;

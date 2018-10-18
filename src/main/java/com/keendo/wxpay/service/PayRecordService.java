@@ -33,8 +33,23 @@ public class PayRecordService {
         return payRecordMapper.selectByOrderSn(orderSn);
     }
 
-    public void add(PayRecord payRecord) {
+    /**
+     * 根据支付记录id获取对象
+     * @param id
+     * @return
+     */
+    public PayRecord getById(Integer id){
+        return payRecordMapper.selectById(id);
+    }
+
+    /**
+     * 新增
+     * @param payRecord
+     * @return:新增对象主键
+     */
+    public Integer add(PayRecord payRecord) {
         payRecordMapper.insert(payRecord);
+        return payRecord.getId();
     }
 
     public void update(PayRecord payRecord) {
@@ -55,8 +70,8 @@ public class PayRecordService {
     }
 
     public static class Constant {
-        private static final Integer NOT_PAY = 0;//待付款
-        private static final Integer FAIL_PAY = -1;//付款失败
-        private static final Integer SUCCESS_PAY = 1;//付款成功
+        public static final Integer NOT_PAY = 0;//待付款
+        public static final Integer FAIL_PAY = -1;//付款失败
+        public static final Integer SUCCESS_PAY = 1;//付款成功
     }
 }

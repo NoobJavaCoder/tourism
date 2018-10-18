@@ -23,6 +23,7 @@ public class PayRecord {
 
     private Date createTime;//产生时间
 
+
     public Integer getId() {
         return id;
     }

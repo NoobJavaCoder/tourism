@@ -27,7 +27,7 @@ public class UploadService {
      * @param directory
      * @return
      */
-    public String uploadPic(MultipartFile file, String directory, String timeStampVal) throws BizException {
+    public String uploadPic(MultipartFile file, String directory, String timeStampVal)  {
 
         if (file == null) {
             throw new BizException("上传图片为空");
@@ -64,9 +64,22 @@ public class UploadService {
      * @param directory
      * @return
      */
-    public String uploadSensitiveFile(MultipartFile file, String directory, String fileName) {
+    public String uploadSensitiveFile(MultipartFile file, String directory, String timeStampVal) {
 
-        String path = this.connect(directory, fileName);
+        if (file == null) {
+            throw new BizException("上传图片为空");
+        }
+
+        Long size = file.getSize();
+        if (Constants.MAX_SIZE.compareTo(size) < 0) {
+            throw new BizException("上传图片大小不可超过1M");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String fileSuffix = FileUtil.getFileSuffix(originalFilename);
+        String filename = timeStampVal + fileSuffix;
+
+        String path = this.connect(directory, filename);
 
         String cosPicUrl = null;
         try {

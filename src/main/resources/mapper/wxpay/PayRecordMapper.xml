@@ -40,8 +40,8 @@
         transaction_id = #{transactionId},
         amount = #{amount},
         status = #{status},
-        create_time = #{create_time},
-        update_time = #{update_time}
+        create_time = #{createTime},
+        update_time = #{updateTime}
         where id = #{id}
     </update>
 

@@ -54,6 +54,7 @@ public class CfgService {
         //小程序
         public final static String MINIAPP_APP_ID_KEY = "MINIAPP_APP_ID";//小程序appid
         public final static String MINIAPP_SECRET_KEY = "MINIAPP_SECRET";//小程序secret
+        public final static String MINIAPP_PAY_NOTIFY_URL_KEY = "MINIAPP_PAY_NOTIFY_URL";//小程序支付回调接口url
 
         //微信商户
         public final static String MCH_ID_KEY = "MCH_ID";//商户id

@@ -86,7 +86,7 @@ public class AdminTourProductController {
      */
     @ResponseBody
     @RequestMapping(value = "/upload/cover-img", method = RequestMethod.POST)
-    public RespBase addCoverImg(UploadFile uploadFile) throws BizException {
+    public RespBase addCoverImg(UploadFile uploadFile){
 
         String url = tourProductService.uploadPic(uploadFile.getMultipartFile(), Constants.COVER_DIRECTORY_NAME);
 
