@@ -3,10 +3,7 @@ package com.keendo.biz.service;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.architecture.utils.Log;
 import com.keendo.biz.mapper.TourOrderMapper;
-import com.keendo.biz.model.OrderOpt;
-import com.keendo.biz.model.TourOrder;
-import com.keendo.biz.model.TourOrderDetail;
-import com.keendo.biz.model.TourProduct;
+import com.keendo.biz.model.*;
 import com.keendo.biz.service.bean.order.AdminProductOrderItemResp;
 import com.keendo.biz.service.bean.order.MyOrderDetail;
 import com.keendo.biz.service.bean.order.MyOrderItem;
@@ -49,6 +46,9 @@ public class TourOrderService {
 
     @Autowired
     private UserIdempotentService userIdempotentService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
 
     //订单保留时间，超过则取消
@@ -121,6 +121,36 @@ public class TourOrderService {
     /**
      * 新增订单
      * @param userId
+     * @param productId
+     * @return
+     */
+    public Integer addOrder(Integer userId ,Integer productId){
+        UserInfo userInfo = userInfoService.getByUserId(userId);
+
+        if(userInfo == null){
+            throw new BizException("缺乏用户资料");
+        }
+
+        OrderUserDetail orderUserDetail = new OrderUserDetail();
+
+        String phoneNo = userInfo.getPhoneNo();
+        orderUserDetail.setPhoneNumber(phoneNo);
+
+        String idCardNo = userInfo.getIdCardNo();
+        orderUserDetail.setIdCardNumber(idCardNo);
+
+        Integer sex = userInfo.getSex();
+        orderUserDetail.setGender(sex);
+
+        String realName = userInfo.getRealName();
+        orderUserDetail.setRealName(realName);
+
+        return addOrder(productId, orderUserDetail, productId);
+    }
+
+    /**
+     * 新增订单
+     * @param userId
      * @param orderUserDetail
      * @param productId
      * @return
@@ -188,6 +218,7 @@ public class TourOrderService {
             });
         }catch (Exception e){
             Log.e(e);
+            throw e;
         }finally {
             userIdempotentService.unlock(idempotentId);
         }
