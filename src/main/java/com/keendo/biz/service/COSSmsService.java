@@ -38,22 +38,18 @@ public class COSSmsService {
      * @param params:短信模板参数
      * @return 返回信息
      */
-    public KdSmsSingleSenderResult sendMsg(String phoneNumber, Integer templateId, String... params) {
+    public SmsSingleSenderResult sendMsg(String phoneNumber, Integer templateId, String... params) {
 
         String smsSign = cfgService.get(Constants.SMS_SIGN_KEY);
 
-        KdSmsSingleSenderResult kdResult = null;
+        SmsSingleSenderResult result = null;
 
         try {
 
             SmsSingleSender ssender = new SmsSingleSender(Integer.parseInt(appid), appkey);
 
-            SmsSingleSenderResult result = ssender.sendWithParam(NATIONCODE, phoneNumber,
+            result = ssender.sendWithParam(NATIONCODE, phoneNumber,
                     templateId, params, smsSign, "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
-
-            kdResult = (KdSmsSingleSenderResult) result;
-
-            System.out.println(result);
 
         } catch (HTTPException e) {
             // HTTP响应码错误
@@ -69,7 +65,7 @@ public class COSSmsService {
             e.printStackTrace();
         }
 
-        return kdResult;
+        return result;
     }
 
 
