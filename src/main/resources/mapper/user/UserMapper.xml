@@ -35,7 +35,7 @@
         sex = #{sex},
         city = #{city},
         province = #{province},
-        country = #{country},
+        country = #{country}
         where id = #{id}
     </update>
 

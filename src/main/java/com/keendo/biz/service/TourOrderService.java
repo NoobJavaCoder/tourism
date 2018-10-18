@@ -162,10 +162,6 @@ public class TourOrderService {
         return timeStamp + radomNumber;
     }
 
-    public static void main(String []args){
-        String s = String.valueOf(System.currentTimeMillis());
-        System.out.println(s);
-    }
 
     /**
      * 新增订单
