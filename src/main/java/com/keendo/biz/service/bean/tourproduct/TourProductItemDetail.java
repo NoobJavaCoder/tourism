@@ -10,6 +10,15 @@ public class TourProductItemDetail {
     private Integer hasOrderedNum;//已下单人数
     private Integer remainNum;//剩余人数
     private String wxPubUrl;//公众号链接
+    private Integer state;
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
     public String getPosterUrl() {
         return posterUrl;
