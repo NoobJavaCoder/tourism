@@ -12,7 +12,6 @@ import com.keendo.biz.service.utils.RandomUtil;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.user.service.utils.BeanUtil;
-import com.keendo.wxpay.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -540,6 +539,7 @@ public class TourOrderService {
             MyOrderItem myOrderItem = new MyOrderItem();
 
             Integer orderId = tourOrder.getId();
+            myOrderItem.setOrderId(orderId);
 
             TourOrderDetail tourOrderDetail = tourOrderDetailService.getByOrderId(orderId);
 
