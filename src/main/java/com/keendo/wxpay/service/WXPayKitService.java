@@ -135,7 +135,7 @@ public class WXPayKitService {
      *
      * @return
      */
-    public UnifiedorderResp unifiedOrder(UnifiedorderParam param) throws BizException {
+    private UnifiedorderResp unifiedOrder(UnifiedorderParam param) throws BizException {
 
         Log.i("【WX Pay】，request = {?}", JsonUtil.toJSon(param));
 

@@ -128,15 +128,15 @@ public class AppTourOrderController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public RespBase orderPay(@RequestBody OrderPayReq orderPayReq) {
+    public RespBase orderPay(@RequestBody IdReq idReq) {
 
         Integer userId = getUserId();
+        if(userId == null){
+            return RespHelper.nologin();
+        }
 
-        BigDecimal amount = orderPayReq.getAmount();
-
-        String orderSn = orderPayReq.getOrderSn();
-
-        MiniAppPayParam miniAppPayParam = payOrderService.payOrder(userId, amount, orderSn);
+        Integer orderId = idReq.getId();
+        MiniAppPayParam miniAppPayParam = payOrderService.payOrder(userId, orderId);
 
         return RespHelper.ok(miniAppPayParam);
     }

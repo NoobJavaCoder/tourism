@@ -7,7 +7,6 @@ import java.math.BigDecimal;
  */
 public class OrderPayReq {
     private String orderSn;
-    private BigDecimal amount = new BigDecimal("0");
 
     public String getOrderSn() {
         return orderSn;
@@ -17,11 +16,4 @@ public class OrderPayReq {
         this.orderSn = orderSn;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
 }

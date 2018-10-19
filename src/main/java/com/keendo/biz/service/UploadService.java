@@ -27,19 +27,11 @@ public class UploadService {
      * @param directory
      * @return
      */
-    public String uploadPic(MultipartFile file, String directory, String timeStampVal)  {
+    public String uploadPic(MultipartFile file, String directory)  {
 
-        if (file == null) {
-            throw new BizException("上传图片为空");
-        }
-
-        Long size = file.getSize();
-        if (Constants.MAX_SIZE.compareTo(size) < 0) {
-            throw new BizException("上传图片大小不可超过1M");
-        }
-
+        String timeStampVal = String.valueOf(System.currentTimeMillis());//时间戳字符串
         String originalFilename = file.getOriginalFilename();
-        String fileSuffix = FileUtil.getFileSuffix(originalFilename);
+        String fileSuffix = FileUtil.getFileSuffix(originalFilename);//文件名后缀
         String filename = timeStampVal + fileSuffix;
 
         String path = this.connect(directory, filename);

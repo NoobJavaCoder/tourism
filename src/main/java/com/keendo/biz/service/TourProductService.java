@@ -152,12 +152,21 @@ public class TourProductService {
     /**
      * 上传图片
      *
-     * @param multipartFile
+     * @param file
      * @return
      */
-    public String uploadPic(MultipartFile multipartFile, String directory) {
+    public String uploadPic(MultipartFile file, String directory) {
 
-        return uploadService.uploadPic(multipartFile, directory, String.valueOf(System.currentTimeMillis()));
+        if (file == null) {
+            throw new BizException("上传图片为空");
+        }
+
+        Long size = file.getSize();
+        if (Constants.FILE_UPLOAD_MAX_SIZE.compareTo(size) < 0) {
+            throw new BizException("上传图片大小不可超过1M");
+        }
+
+        return uploadService.uploadPic(file, directory);
     }
 
     public TourProduct getById(Integer id) {
@@ -249,6 +258,8 @@ public class TourProductService {
         public final static Integer FULL_STATE = 5;//满员
         public final static Integer FINISH_STATE = 9;//旅游结束
         public final static Integer UNSHELVE_STATE = 13;//下架
+
+        private final static Long FILE_UPLOAD_MAX_SIZE = 1048576L;//上传文件最大为1M
 
     }
 }

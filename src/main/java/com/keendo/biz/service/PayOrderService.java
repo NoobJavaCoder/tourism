@@ -1,10 +1,10 @@
 package com.keendo.biz.service;
 
 import com.keendo.architecture.exception.BizException;
+import com.keendo.biz.model.TourOrderDetail;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.wxpay.bean.MiniAppPayParam;
-import com.keendo.wxpay.bean.PaySignature;
 import com.keendo.wxpay.service.WXPayKitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,21 +20,32 @@ public class PayOrderService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TourOrderDetailService tourOrderDetailService;
+
 
     /**
      * 付款
      * @param userId:用户id
-     * @param amount:付款金额
-     * @param orderSn:系统订单号
      * @return:小程序拉起支付需要参数
      */
-    public MiniAppPayParam payOrder(Integer userId, BigDecimal amount, String orderSn) {
+    public MiniAppPayParam payOrder(Integer userId,Integer orderId) {
+
+        TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(orderId);
+
+        if(orderDetail == null){
+            throw new BizException("订单不存在");
+        }
+
+        BigDecimal price = orderDetail.getPrice();
+
+        String orderSn = orderDetail.getOrderSn();
 
         String openId = this.getOpenIdByUserId(userId);
 
         String body = this.getPayBody();
 
-        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, amount, orderSn);
+        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, price, orderSn);
 
         return miniAppPayParam;
     }
