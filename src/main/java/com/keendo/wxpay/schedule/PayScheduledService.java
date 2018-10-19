@@ -7,6 +7,7 @@ import com.keendo.wxpay.model.PayRecord;
 import com.keendo.wxpay.service.IPayResultService;
 import com.keendo.wxpay.service.PayRecordService;
 import com.keendo.wxpay.service.WXPayKitService;
+import com.keendo.wxpay.service.WXPayKitService.Constants;
 import com.keendo.wxpay.utils.Log;
 import com.keendo.wxpay.utils.WXPayUtil;
 import org.springframework.scheduling.annotation.Async;
@@ -74,20 +75,27 @@ public class PayScheduledService {
 
             OrderQueryResp orderQueryResp = wxPayKitService.queryOrder(req);
 
-            //根据返回交易状态修改支付记录结果
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            String wxTradeState = orderQueryResp.getTradeState();//微信记录的交易状态
 
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                    //修改订单状态
-                    payResultService.orderSuccess(orderSn);
+            //若返回结果为交易成功则进行一下操作
+            if(Constants.WX_TRADE_STATE_SUCCESS.equals(wxTradeState)){
+                //根据返回交易状态修改支付记录结果
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-                    //修改支付记录状态并记录第三方流水号
-                    String thirdPartOrderNo = orderQueryResp.getTransactionId();
-                    payRecordService.success(orderSn, thirdPartOrderNo);
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                        //修改订单状态
+                        payResultService.orderSuccess(orderSn);
 
-                }
-            });
+                        //修改支付记录状态并记录第三方流水号
+                        String thirdPartOrderNo = orderQueryResp.getTransactionId();
+                        payRecordService.success(orderSn, thirdPartOrderNo);
+                    }
+                });
+
+            }
+
+
 
         }
 

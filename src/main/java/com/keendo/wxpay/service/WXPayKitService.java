@@ -1,7 +1,6 @@
 package com.keendo.wxpay.service;
 
 import com.keendo.wxpay.bean.*;
-import com.keendo.wxpay.constant.WXPayConstants;
 import com.keendo.wxpay.exception.BizException;
 import com.keendo.wxpay.model.PayRecord;
 import com.keendo.wxpay.utils.*;
@@ -150,7 +149,7 @@ public class WXPayKitService {
 
         UnifiedorderResp uoResp = XmlBeanUtil.toBeanWithCData(response, UnifiedorderResp.class);
 
-        if (WXPayConstants.SUCCESS.equals(uoResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(uoResp.getResultCode())) {
+        if (Constants.RETURN_CODE_SUCCESS.equals(uoResp.getReturnCode()) && Constants.RESULT_CODE_SUCCESS.equals(uoResp.getResultCode())) {
 
             return uoResp;
         } else {
@@ -178,7 +177,7 @@ public class WXPayKitService {
 
         OrderQueryResp orderQueryResp = XmlBeanUtil.toBeanWithCData(response, OrderQueryResp.class);
 
-        if (WXPayConstants.SUCCESS.equals(orderQueryResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(orderQueryResp.getResultCode())) {
+        if (Constants.RETURN_CODE_SUCCESS.equals(orderQueryResp.getReturnCode()) && Constants.RESULT_CODE_SUCCESS.equals(orderQueryResp.getResultCode())) {
 
             return orderQueryResp;
         } else {
@@ -292,34 +291,17 @@ public class WXPayKitService {
         WXPayUtil.writeXml(response, xml);
     }
 
-    private static class Constants {
+    public static class Constants {
         private static final String UNIFIED_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单api地址
 
         private static String QUERY_ORDER_URL = "https://api.mch.weixin.qq.com/pay/orderquery";//查询订单url
 
         private static final String RESULT_CODE_SUCCESS = "SUCCESS";
+
+        private static final String RETURN_CODE_SUCCESS = "SUCCESS";
+
+        public static final String WX_TRADE_STATE_SUCCESS = "SUCCESS";
     }
 
 
-    public static void main(String[] args) {
-//        String resp = "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
-//                "<return_msg><![CDATA[OK]]></return_msg>" +
-//                "<appid><![CDATA[wx2d547e92d59aefca]]></appid>" +
-//                "<mch_id><![CDATA[1500042702]]></mch_id>" +
-//                "<nonce_str><![CDATA[onVpD55LFJa4CVlI]]></nonce_str>" +
-//                "<sign><![CDATA[E2C49A90EE4EA2ECA9686005801819A0]]></sign>" +
-//                "<result_code><![CDATA[FAIL]]></result_code>" +
-//                "<err_code><![CDATA[ORDERNOTEXIST]]></err_code>" +
-//                "<err_code_des><![CDATA[order not exist]]></err_code_des>" +
-//                "</xml>";
-//
-//        OrderQueryResp orderQueryResp = XmlBeanUtil.toBeanWithCData(resp, OrderQueryResp.class);
-//        System.out.println(orderQueryResp);
-        String response = "<xml><return_code><![CDATA[FAIL]]></return_code>\n" +
-                "<return_msg><![CDATA[商户号mch_id与appid不匹配]]></return_msg>\n" +
-                "</xml>";
-
-        UnifiedorderResp unifiedorderResp = XmlBeanUtil.toBeanWithCData(response, UnifiedorderResp.class);
-        System.out.println(unifiedorderResp);
-    }
 }
