@@ -64,6 +64,7 @@ public class TourOrderService {
     public MyOrderDetail getMyOrderDetail(Integer tourOrderId) {
 
         MyOrderDetail myOrderDetail = new MyOrderDetail();
+        myOrderDetail.setOrderId(tourOrderId);
 
         TourOrder tourOrder = getById(tourOrderId);
 

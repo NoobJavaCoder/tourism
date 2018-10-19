@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class MyOrderDetail {
 
+    private Integer orderId;
 
     private String productTitle;
     private String coverImgUrl;
@@ -25,6 +26,13 @@ public class MyOrderDetail {
 
     private Integer tourProductId;
 
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
     public Integer getTourProductId() {
         return tourProductId;
