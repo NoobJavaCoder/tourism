@@ -149,7 +149,7 @@ public class TourOrderService {
         String realName = userInfo.getRealName();
         orderUserDetail.setRealName(realName);
 
-        return addOrder(productId, orderUserDetail, productId);
+        return addOrder(userId, orderUserDetail, productId);
     }
 
     /**

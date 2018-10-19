@@ -12,7 +12,6 @@ import com.keendo.biz.service.PayOrderService;
 import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.bean.order.MyOrderDetail;
 import com.keendo.biz.service.bean.order.MyOrderItem;
-import com.keendo.biz.service.bean.order.OrderUserDetail;
 import com.keendo.user.controlller.BaseController;
 import com.keendo.wxpay.bean.MiniAppPayParam;
 import com.keendo.wxpay.bean.PaySignature;
