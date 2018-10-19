@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class MyOrderItem {
 
+    private Integer orderId;
     private String productTitle;
     private String coverImgUrl;
 
@@ -15,6 +16,14 @@ public class MyOrderItem {
     private BigDecimal price;
 
     private Integer tourOrderState;
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
     public Integer getTourOrderState() {
         return tourOrderState;
