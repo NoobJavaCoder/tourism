@@ -20,9 +20,16 @@ public class PayOrderService {
     @Autowired
     private UserService userService;
 
+
+    /**
+     * 付款
+     * @param userId:用户id
+     * @param amount:付款金额
+     * @param orderSn:系统订单号
+     * @return:小程序拉起支付需要参数
+     */
     public MiniAppPayParam payOrder(Integer userId, BigDecimal amount, String orderSn) {
 
-        //openid body amount orderSn
         String openId = this.getOpenIdByUserId(userId);
 
         String body = this.getPayBody();
@@ -49,7 +56,7 @@ public class PayOrderService {
 
 
     /**
-     * TODO 暂时常量代替,测试后再确定是否需要修改
+     * TODO 微信对body的描述欠缺,暂时常量代替,测试后再与产品商议如何修改
      * 商品描述
      *
      * @return
