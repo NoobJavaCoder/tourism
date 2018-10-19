@@ -4,7 +4,6 @@ import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.controller.admin.bean.order.AddTourOrderReq;
-import com.keendo.biz.controller.app.req.OrderPayReq;
 import com.keendo.biz.controller.base.bean.IdReq;
 import com.keendo.biz.controller.base.bean.PageParamReq;
 import com.keendo.biz.model.TourOrder;
@@ -17,7 +16,6 @@ import com.keendo.wxpay.bean.MiniAppPayParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**

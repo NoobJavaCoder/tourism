@@ -90,8 +90,6 @@ public class TourOrderService {
         BigDecimal price = orderDetail1.getPrice();
         myOrderDetail.setPrice(price);
 
-        String orderSn = tourOrder.getOrderSn();
-        myOrderDetail.setOrderSn(orderSn);
 
         //订单轨迹
         List<OrderOpt> orderOptList = orderOptService.getListByOrderId(tourOrderId);
