@@ -10,7 +10,6 @@ import com.keendo.biz.model.TourOrder;
 import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.bean.order.MyOrderDetail;
 import com.keendo.biz.service.bean.order.MyOrderItem;
-import com.keendo.biz.service.bean.order.OrderUserDetail;
 import com.keendo.user.controlller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
