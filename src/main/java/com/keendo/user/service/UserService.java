@@ -3,6 +3,7 @@ package com.keendo.user.service;
 import com.keendo.user.mapper.UserMapper;
 import com.keendo.user.model.User;
 import com.keendo.user.service.bean.user.LoginRet;
+import com.keendo.user.service.bean.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,24 @@ public class UserService {
         userMapper.update(user);
     }
 
+    /**
+     * 根据用户id获取"我的"用户信息vo
+     * @param userId:用户id
+     * @return
+     */
+    public UserInfoVO getUserInfoVO(Integer userId){
+        User user = this.getById(userId);
+
+        UserInfoVO vo = new UserInfoVO();
+
+        String headImgUrl = user.getHeadImgUrl();
+        vo.setHeadImgUrl(headImgUrl);
+
+        String nickname = user.getNickname();
+        vo.setNickname(nickname);
+
+        return vo;
+    }
 
     /**
      * 检查登录状态

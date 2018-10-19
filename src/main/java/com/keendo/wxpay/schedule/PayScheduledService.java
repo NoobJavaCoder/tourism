@@ -7,6 +7,7 @@ import com.keendo.wxpay.model.PayRecord;
 import com.keendo.wxpay.service.IPayResultService;
 import com.keendo.wxpay.service.PayRecordService;
 import com.keendo.wxpay.service.WXPayKitService;
+import com.keendo.wxpay.service.WXPayKitService.Constants;
 import com.keendo.wxpay.utils.Log;
 import com.keendo.wxpay.utils.WXPayUtil;
 import org.springframework.scheduling.annotation.Async;
@@ -44,57 +45,60 @@ public class PayScheduledService {
      * 每分钟执行一次
      * 检查订单支付结果
      */
-//    @Scheduled(cron = "0 0/1 * * * ? ")
-//    public void checkPayStatus() {
-//        Log.i("Task order query begin");
-//
-//        List<PayRecord> notPay = payRecordService.getNotPayRecordList();
-//        if (CollectionUtils.isEmpty(notPay)) {
-//            return;
-//        }
-//        for (PayRecord record : notPay) {
-//            OrderQueryReq req = new OrderQueryReq();
-//
-//            String appId = miniAppPayConfigService.getAppId();
-//            req.setAppId(appId);
-//
-//            String mchId = miniAppPayConfigService.getMchId();
-//            req.setMchId(mchId);
-//
-//            String nonceStr = WXPayUtil.createNonceStr();
-//            req.setNonceStr(nonceStr);
-//
-//            String orderSn = record.getOrderSn();//系统订单号
-//            req.setOutTradeNo(orderSn);
-//
-//            String sign = null;
-//            try {
-//                String key = miniAppPayConfigService.getMchKey();
-//                sign = WXPayUtil.getSign(req, key);
-//            } catch (Exception e) {
-//                Log.e(e);
-//            }
-//            req.setSign(sign);
-//
-//            OrderQueryResp orderQueryResp = wxPayKitService.queryOrder(req);
-//
-//            //根据返回交易状态修改支付记录结果
-//            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-//
-//                @Override
-//                protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-//                    //修改订单状态
-//                    payResultService.orderSuccess(orderSn);
-//
-//                    //修改支付记录状态并记录第三方流水号
-//                    String thirdPartOrderNo = orderQueryResp.getTransactionId();
-//                    payRecordService.success(orderSn, thirdPartOrderNo);
-//
-//                }
-//            });
-//
-//        }
-//
-//    }
+    @Scheduled(cron = "0 0/1 * * * ? ")
+    public void checkPayStatus() {
+        Log.i("Task order query begin");
+
+        List<PayRecord> notPay = payRecordService.getNotPayRecordList();
+        if (CollectionUtils.isEmpty(notPay)) {
+            return;
+        }
+        for (PayRecord record : notPay) {
+            OrderQueryReq req = new OrderQueryReq();
+
+            String appId = miniAppPayConfigService.getAppId();
+            req.setAppId(appId);
+
+            String mchId = miniAppPayConfigService.getMchId();
+            req.setMchId(mchId);
+
+            String nonceStr = WXPayUtil.createNonceStr();
+            req.setNonceStr(nonceStr);
+
+            String orderSn = record.getOrderSn();//系统订单号
+            req.setOutTradeNo(orderSn);
+
+            String key = miniAppPayConfigService.getMchKey();
+            String sign = WXPayUtil.getSign(req, key);
+
+            req.setSign(sign);
+
+            OrderQueryResp orderQueryResp = wxPayKitService.queryOrder(req);
+
+            String wxTradeState = orderQueryResp.getTradeState();//微信记录的交易状态
+
+            //若返回结果为交易成功则进行一下操作
+            if(Constants.WX_TRADE_STATE_SUCCESS.equals(wxTradeState)){
+                //根据返回交易状态修改支付记录结果
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                        //修改订单状态
+                        payResultService.orderSuccess(orderSn);
+
+                        //修改支付记录状态并记录第三方流水号
+                        String thirdPartOrderNo = orderQueryResp.getTransactionId();
+                        payRecordService.success(orderSn, thirdPartOrderNo);
+                    }
+                });
+
+            }
+
+
+
+        }
+
+    }
 
 }

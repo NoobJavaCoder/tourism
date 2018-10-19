@@ -1,7 +1,6 @@
 package com.keendo.wxpay.service;
 
 import com.keendo.wxpay.bean.*;
-import com.keendo.wxpay.constant.WXPayConstants;
 import com.keendo.wxpay.exception.BizException;
 import com.keendo.wxpay.model.PayRecord;
 import com.keendo.wxpay.utils.*;
@@ -38,17 +37,18 @@ public class WXPayKitService {
      * 支付
      *
      * @param openId:付款方用户openId
-     * @param body:支付信息
+     * @param body:支付信息,商品描述   例:腾讯充值中心-QQ会员充值
      * @param amount:金额(传入金额单位为元)
-     * @param orderSn:系统订单编号
+     * @param orderSn:系统订单编号(32位以内,系统唯一,字母数字的字符串)
+     * @return : 小程序端拉起支付需要的参数
      */
-    public PaySignature pay(String openId, String body, BigDecimal amount, String orderSn) throws Exception {
+    public MiniAppPayParam pay(String openId, String body, BigDecimal amount, String orderSn) {
 
         UnifiedorderParam unifiedorderParam = this.createUnifiedorderParam(openId, body, amount, orderSn);
 
-        PaySignature paySignature = transactionTemplate.execute(new TransactionCallback<PaySignature>() {
+        MiniAppPayParam miniAppPayParam = transactionTemplate.execute(new TransactionCallback<MiniAppPayParam>() {
             @Override
-            public PaySignature doInTransaction(TransactionStatus transactionStatus) {
+            public MiniAppPayParam doInTransaction(TransactionStatus transactionStatus) {
 
                 // 支付记录表中新增一条支付记录
                 PayRecord payRecord = new PayRecord();
@@ -74,13 +74,14 @@ public class WXPayKitService {
                 //2 构建返回参数
                 String appId = miniAppPayConfigService.getAppId();
                 String nonceStr = WXPayUtil.createNonceStr();
-                PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
 
-                return paySignature;
+                MiniAppPayParam miniAppPayParam = createMiniAppPayParam(appId, nonceStr, prepayId);
+
+                return miniAppPayParam;
             }
         });
 
-        return paySignature;
+        return miniAppPayParam;
     }
 
     /**
@@ -93,7 +94,7 @@ public class WXPayKitService {
      * @return
      * @throws Exception
      */
-    private UnifiedorderParam createUnifiedorderParam(String openId, String body, BigDecimal amount, String orderSn) throws Exception {
+    private UnifiedorderParam createUnifiedorderParam(String openId, String body, BigDecimal amount, String orderSn) {
         UnifiedorderParam unifiedorderParam = new UnifiedorderParam();
 
         String appId = miniAppPayConfigService.getAppId();
@@ -114,13 +115,13 @@ public class WXPayKitService {
 
         unifiedorderParam.setTradeType("JSAPI");
 
-        String createIp = WXPayUtil.getCreateIp();
-        unifiedorderParam.setSpBillCreateIp(createIp);
-
         unifiedorderParam.setBody(body);
 
         String totalFee = String.valueOf(WXPayUtil.getTotalFee(amount));
         unifiedorderParam.setTotalFee(totalFee);
+
+        String createIp = WXPayUtil.getCreateIp();
+        unifiedorderParam.setSpBillCreateIp(createIp);
 
         String key = miniAppPayConfigService.getMchKey();
         String sign = WXPayUtil.getSign(unifiedorderParam, key);
@@ -142,9 +143,13 @@ public class WXPayKitService {
 
         String response = HttpUtil.sendPost(Constants.UNIFIED_ORDER_URL, requestXml);
 
+        System.out.println(response);
+
+        Log.i("【WX Pay】，response = {?}", response);
+
         UnifiedorderResp uoResp = XmlBeanUtil.toBeanWithCData(response, UnifiedorderResp.class);
 
-        if (WXPayConstants.SUCCESS.equals(uoResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(uoResp.getResultCode())) {
+        if (Constants.RETURN_CODE_SUCCESS.equals(uoResp.getReturnCode()) && Constants.RESULT_CODE_SUCCESS.equals(uoResp.getResultCode())) {
 
             return uoResp;
         } else {
@@ -168,11 +173,11 @@ public class WXPayKitService {
 
         String response = HttpUtil.sendPost(Constants.QUERY_ORDER_URL, requestXml);
 
-        Log.i("【OrderQuery】, response = {?}",response);
+        Log.i("【OrderQuery】, response = {?}", response);
 
         OrderQueryResp orderQueryResp = XmlBeanUtil.toBeanWithCData(response, OrderQueryResp.class);
 
-        if (WXPayConstants.SUCCESS.equals(orderQueryResp.getReturnCode()) && WXPayConstants.SUCCESS.equals(orderQueryResp.getResultCode())) {
+        if (Constants.RETURN_CODE_SUCCESS.equals(orderQueryResp.getReturnCode()) && Constants.RESULT_CODE_SUCCESS.equals(orderQueryResp.getResultCode())) {
 
             return orderQueryResp;
         } else {
@@ -191,7 +196,7 @@ public class WXPayKitService {
      * @throws Exception
      */
     @Transactional
-    public WXNotifyResp callback(String xmlRet) throws Exception {
+    public WXNotifyResp callback(String xmlRet) {
         String key = miniAppPayConfigService.getMchKey();
 
         Boolean signValid = WXPayUtil.checkSign(xmlRet, key);
@@ -246,6 +251,25 @@ public class WXPayKitService {
     }
 
     /**
+     * 生成小程序支付参数对象,传递给小程序端拉起微信支付
+     *
+     * @return
+     */
+    private  MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId) {
+        PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
+
+        MiniAppPayParam miniAppPayParam = BeanUtil.copyBean(paySignature, MiniAppPayParam.class);
+
+        String key = miniAppPayConfigService.getMchKey();
+
+        String paySign = WXPayUtil.getSign(paySignature, key);
+
+        miniAppPayParam.setPaySign(paySign);
+
+        return miniAppPayParam;
+    }
+
+    /**
      * 响应微信
      *
      * @param response
@@ -267,29 +291,17 @@ public class WXPayKitService {
         WXPayUtil.writeXml(response, xml);
     }
 
-    private static class Constants {
+    public static class Constants {
         private static final String UNIFIED_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单api地址
 
         private static String QUERY_ORDER_URL = "https://api.mch.weixin.qq.com/pay/orderquery";//查询订单url
 
         private static final String RESULT_CODE_SUCCESS = "SUCCESS";
+
+        private static final String RETURN_CODE_SUCCESS = "SUCCESS";
+
+        public static final String WX_TRADE_STATE_SUCCESS = "SUCCESS";
     }
 
 
-
-    public static void main(String []args){
-        String resp = "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
-                "<return_msg><![CDATA[OK]]></return_msg>" +
-                "<appid><![CDATA[wx2d547e92d59aefca]]></appid>" +
-                "<mch_id><![CDATA[1500042702]]></mch_id>" +
-                "<nonce_str><![CDATA[onVpD55LFJa4CVlI]]></nonce_str>" +
-                "<sign><![CDATA[E2C49A90EE4EA2ECA9686005801819A0]]></sign>" +
-                "<result_code><![CDATA[FAIL]]></result_code>" +
-                "<err_code><![CDATA[ORDERNOTEXIST]]></err_code>" +
-                "<err_code_des><![CDATA[order not exist]]></err_code_des>" +
-                "</xml>";
-
-        OrderQueryResp orderQueryResp = XmlBeanUtil.toBeanWithCData(resp, OrderQueryResp.class);
-        System.out.println(orderQueryResp);
-    }
 }

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -25,8 +26,15 @@ public class WXPayUtil {
      * @return
      * @throws Exception
      */
-    public static String getSign(Object o, String key) throws Exception {
-        return Signature.getSign(o, key);
+    public static String getSign(Object o, String key) {
+        String sign = null;
+        try {
+            sign = Signature.getSign(o, key);
+        } catch (Exception e) {
+            Log.e(e);
+            e.printStackTrace();
+        }
+        return sign;
     }
 
     /**
@@ -37,8 +45,14 @@ public class WXPayUtil {
      * @return
      * @throws Exception
      */
-    public static String getSign(String xmlRet, String key) throws Exception {
-        Map map = XmlBeanUtil.doXMLParse(xmlRet);
+    public static String getSign(String xmlRet, String key) {
+        Map map = new HashMap();
+        try {
+            map = XmlBeanUtil.doXMLParse(xmlRet);
+        } catch (Exception e) {
+            Log.e(e);
+            e.printStackTrace();
+        }
         String sign = Signature.getSign(map, key);
         return sign;
     }
@@ -51,14 +65,20 @@ public class WXPayUtil {
      * @return
      * @throws Exception
      */
-    public static boolean checkSign(String xmlRet, String key) throws Exception {
+    public static boolean checkSign(String xmlRet, String key) {
         String geneSign = getSign(xmlRet, key);
         String signFromXml = getSignFromXml(xmlRet);
         return geneSign.equals(signFromXml);
     }
 
-    private static String getSignFromXml(String xmlRet) throws Exception {
-        Map map = XmlBeanUtil.doXMLParse(xmlRet);
+    private static String getSignFromXml(String xmlRet) {
+        Map map = new HashMap();
+        try {
+            map = XmlBeanUtil.doXMLParse(xmlRet);
+        } catch (Exception e) {
+            Log.e(e);
+            e.printStackTrace();
+        }
         String sign = (String) map.get("sign");
         return sign;
     }
@@ -70,28 +90,20 @@ public class WXPayUtil {
      * @return
      * @throws Exception
      */
-    public static String getResultCode(String xmlRet) throws Exception {
-        Map map = XmlBeanUtil.doXMLParse(xmlRet);
-        String resultCode = (String) map.get("result_code");
+    public static String getResultCode(String xmlRet) {
+        Map map;
+        String resultCode = null;
+        try {
+            map = XmlBeanUtil.doXMLParse(xmlRet);
+            resultCode = (String) map.get("result_code");
+        } catch (Exception e) {
+            Log.e(e);
+            e.printStackTrace();
+        }
         return resultCode;
     }
 
-    /**
-     * 生成小程序支付参数对象
-     *
-     * @return
-     */
-    public static MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId, String key) throws Exception {
-        PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
 
-        MiniAppPayParam miniAppPayParam = BeanUtil.copyBean(paySignature, MiniAppPayParam.class);
-
-        String paySign = getSign(paySignature, key);
-
-        miniAppPayParam.setPaySign(paySign);
-
-        return miniAppPayParam;
-    }
 
     /**
      * 获取32位随机字符串作为nonceStr
@@ -145,9 +157,16 @@ public class WXPayUtil {
      * @return
      * @throws Exception
      */
-    public static String getCreateIp() throws Exception {
-        InetAddress address = InetAddress.getLocalHost();
-        String hostAddress = address.getHostAddress();
+    public static String getCreateIp() {
+        InetAddress address;
+        String hostAddress = null;
+        try {
+            address = InetAddress.getLocalHost();
+            hostAddress = address.getHostAddress();
+        } catch (Exception e) {
+            Log.e(e);
+            e.printStackTrace();
+        }
         return hostAddress;
     }
 

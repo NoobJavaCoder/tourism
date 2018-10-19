@@ -6,17 +6,18 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="state" property="state" jdbcType="INTEGER" />
         <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="order_sn" property="orderSn" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List" >
-        `id` , `tour_product_id` , `create_time` , `state` , `user_id` 
+        `id` , `tour_product_id` , `create_time` , `state` , `user_id` ,`order_sn`
     </sql>
 
     <insert id="insert" parameterType="com.keendo.biz.model.TourOrder" useGeneratedKeys="true" keyProperty="id">
         insert into
             e_tour_order
-                (`tour_product_id` , `create_time` , `state` , `user_id` )
-        values ( #{tourProductId} ,#{createTime} ,#{state} ,#{userId} )
+                (`tour_product_id` , `create_time` , `state` , `user_id` ,`order_sn`)
+        values ( #{tourProductId} ,#{createTime} ,#{state} ,#{userId},#{orderSn} )
     </insert>
 
 
@@ -69,6 +70,15 @@
             e_tour_order
         WHERE
             id = #{id}
+    </select>
+
+    <select id="selectByOrderSn" resultMap="baseResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_tour_order
+        WHERE
+        order_sn = #{orderSn}
     </select>
     
     <update id="updateByStateAndCreateTime" parameterType="map" >

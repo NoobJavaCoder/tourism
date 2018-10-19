@@ -146,6 +146,9 @@ public class XmlBeanUtil {
     @SuppressWarnings("unchecked")
     public static <T> T toBeanWithCData(String xmlStr, Class<T> cls) {
         XStream xstream = getXStreamWithCData();
+
+        xstream.setClassLoader(Thread.currentThread().getContextClassLoader());
+
         // 识别cls类中的注解
         xstream.processAnnotations(cls);
         // 设置JavaBean的类别名

@@ -24,7 +24,7 @@
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into e_user (`nickname` ,`head_img_url`,`open_id`,`sex`,`city`,`province`,`country`,`create_time`)
         values
-        (#{nickname},#{headImgUrl},#{supportCount},#{openId},#{sex},#{city},#{province},#{country},#{createTime})
+        (#{nickname},#{headImgUrl},#{openId},#{sex},#{city},#{province},#{country},#{createTime})
     </insert>
 
     <update id="update">
@@ -35,7 +35,7 @@
         sex = #{sex},
         city = #{city},
         province = #{province},
-        country = #{country},
+        country = #{country}
         where id = #{id}
     </update>
 

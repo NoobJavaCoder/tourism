@@ -18,6 +18,8 @@ public interface TourOrderMapper {
 
     TourOrder selectById(Integer id);
 
+    TourOrder selectByOrderSn(String orderSn);
+
     int countByTourProductId(Integer tourProductId);
 
     int countByTourProductIdAndState(@Param("tourProductId") Integer tourProductId, @Param("state") Integer state);

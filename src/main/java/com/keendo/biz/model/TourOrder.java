@@ -9,6 +9,15 @@ public class TourOrder {
     private Date createTime;
     private Integer state;
     private Integer userId;
+    private String orderSn;
+
+    public String getOrderSn() {
+        return orderSn;
+    }
+
+    public void setOrderSn(String orderSn) {
+        this.orderSn = orderSn;
+    }
 
     public Integer getId() {
         return id;

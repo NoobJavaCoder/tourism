@@ -14,7 +14,7 @@ public class PayResultService implements IPayResultService {
 
     @Override
     public Boolean isOrderExist(String orderNo) {
-        TourOrder tourOrder = tourOrderService.getById(Integer.valueOf(orderNo));
+        TourOrder tourOrder = tourOrderService.getByOrderSn(orderNo);
 
         if(tourOrder == null){
             return false;
@@ -24,17 +24,17 @@ public class PayResultService implements IPayResultService {
 
     @Override
     public void orderSuccess(String orderNo) {
-        tourOrderService.paySuccess(Integer.valueOf(orderNo));
+        tourOrderService.paySuccess(orderNo);
     }
 
     @Override
     public BigDecimal getOrderFee(String orderNo) {
-        BigDecimal fee = tourOrderService.getFeeByOrderId(Integer.valueOf(orderNo));
+        BigDecimal fee = tourOrderService.getFeeByOrderId(orderNo);
         return fee;
     }
 
     @Override
     public Boolean isOrderPaid(String orderNo) {
-        return tourOrderService.isOrderPaid(Integer.valueOf(orderNo));
+        return tourOrderService.isOrderPaid(orderNo);
     }
 }
