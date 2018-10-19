@@ -26,6 +26,16 @@ public class MyOrderDetail {
 
     private Integer tourProductId;
 
+    private Integer orderState;
+
+    public Integer getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(Integer orderState) {
+        this.orderState = orderState;
+    }
+
     public Integer getOrderId() {
         return orderId;
     }
