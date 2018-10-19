@@ -86,8 +86,12 @@ public class TourOrderService {
         myOrderDetail.setDepartureTime(departureTime);
 
         //花费
-        BigDecimal price = myOrderDetail.getPrice();
+        TourOrderDetail orderDetail1 = tourOrderDetailService.getByOrderId(tourOrderId);
+        BigDecimal price = orderDetail1.getPrice();
         myOrderDetail.setPrice(price);
+
+        String orderSn = tourOrder.getOrderSn();
+        myOrderDetail.setOrderSn(orderSn);
 
         //订单轨迹
         List<OrderOpt> orderOptList = orderOptService.getListByOrderId(tourOrderId);
@@ -103,11 +107,12 @@ public class TourOrderService {
         }
 
         //订单人信息
-        TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(tourOrderId);
+        TourOrderDetail orderDetail = orderDetail1;
 
         //电话号码
         String phoneNumber = orderDetail.getPhoneNumber();
         myOrderDetail.setPhoneNumber(phoneNumber);
+
 
         //真实名字
         String realName = orderDetail.getRealName();
