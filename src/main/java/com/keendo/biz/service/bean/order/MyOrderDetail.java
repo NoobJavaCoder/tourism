@@ -8,12 +8,14 @@ import java.util.Date;
  */
 public class MyOrderDetail {
 
+    private Integer orderId;
 
     private String productTitle;
     private String coverImgUrl;
 
     private Date orderCreateTime;
     private Date orderPayTime;
+    private Date orderCancelTime;
 
     private String phoneNumber;
     private String idCardNumber;
@@ -25,6 +27,31 @@ public class MyOrderDetail {
 
     private Integer tourProductId;
 
+    private Integer orderState;
+
+    public Date getOrderCancelTime() {
+        return orderCancelTime;
+    }
+
+    public void setOrderCancelTime(Date orderCancelTime) {
+        this.orderCancelTime = orderCancelTime;
+    }
+
+    public Integer getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(Integer orderState) {
+        this.orderState = orderState;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
     public Integer getTourProductId() {
         return tourProductId;
