@@ -15,6 +15,7 @@ public class MyOrderDetail {
 
     private Date orderCreateTime;
     private Date orderPayTime;
+    private Date orderCancelTime;
 
     private String phoneNumber;
     private String idCardNumber;
@@ -27,6 +28,14 @@ public class MyOrderDetail {
     private Integer tourProductId;
 
     private Integer orderState;
+
+    public Date getOrderCancelTime() {
+        return orderCancelTime;
+    }
+
+    public void setOrderCancelTime(Date orderCancelTime) {
+        this.orderCancelTime = orderCancelTime;
+    }
 
     public Integer getOrderState() {
         return orderState;

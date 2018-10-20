@@ -106,6 +106,11 @@ public class TourOrderService {
             if (toState.equals(Constants.HAS_PAY_STATE)) {
                 myOrderDetail.setOrderPayTime(orderOpt.getCreateTime());
             }
+
+            if (toState.equals(Constants.CANCEL_STATE)){
+                myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
+            }
+
         }
 
         //订单人信息
