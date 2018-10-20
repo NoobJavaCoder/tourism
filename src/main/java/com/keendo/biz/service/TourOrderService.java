@@ -107,7 +107,11 @@ public class TourOrderService {
                 myOrderDetail.setOrderPayTime(orderOpt.getCreateTime());
             }
 
-            if (toState.equals(Constants.CANCEL_STATE)){
+            if (toState.equals(Constants.USER_CANCEL_STATE)){
+                myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
+            }
+
+            if (toState.equals(Constants.SYSTEM_CANCEL_STATE)){
                 myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
             }
 
@@ -424,7 +428,7 @@ public class TourOrderService {
 
         transactionTemplate.execute(status -> {
 
-            Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.CANCEL_STATE);
+            Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.USER_CANCEL_STATE);
             if (updateResult == 0) {
                 throw new BizException("取消订单失败");
             }
@@ -473,7 +477,7 @@ public class TourOrderService {
         Long time = currentTimeMillis - ORDER_RETENTION_TIME;
 
         Date date = new Date(time);
-        updateByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.CANCEL_STATE, date);
+        updateByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.SYSTEM_CANCEL_STATE, date);
     }
 
     private Integer updateByStateAndCreateTime(Integer fromState, Integer toState, Date createTime) {
@@ -584,8 +588,9 @@ public class TourOrderService {
     private static class Constants {
         private final static Integer NOT_PAY_STATE = 0;//未付款
         private final static Integer HAS_PAY_STATE = 1;//已经付款
-        private final static Integer CANCEL_STATE = 2;//取消
+        private final static Integer USER_CANCEL_STATE = 2;//取消
         private final static Integer HAS_RETURN_STATE = 3;//已经退款
+        private final static Integer SYSTEM_CANCEL_STATE = 4;//系统取消
 
         private final static Integer ORDER_SN_LENGTH = 32;//系统订单号位数
     }
