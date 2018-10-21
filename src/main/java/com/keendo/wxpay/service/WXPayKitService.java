@@ -208,6 +208,8 @@ public class WXPayKitService {
 
             PayCallBack payCallBack = XmlBeanUtil.toBeanWithCData(xmlRet, PayCallBack.class);
 
+            Log.i("callback info = {?}",payCallBack.toString());
+
             Integer totalFee = payCallBack.getTotalFee();//回调支付金额
 
             String orderNo = payCallBack.getOutTradeNo();//回调系统订单号
