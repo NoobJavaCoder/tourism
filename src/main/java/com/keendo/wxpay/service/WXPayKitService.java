@@ -208,8 +208,6 @@ public class WXPayKitService {
 
             PayCallBack payCallBack = XmlBeanUtil.toBeanWithCData(xmlRet, PayCallBack.class);
 
-            Log.i("callback info = {?}",payCallBack.toString());
-
             Integer totalFee = payCallBack.getTotalFee();//回调支付金额
 
             String orderNo = payCallBack.getOutTradeNo();//回调系统订单号
@@ -217,14 +215,11 @@ public class WXPayKitService {
             String thirdPartOrderNo = payCallBack.getTransactionId();//微信第三方支付流水号
 
             Boolean isOrderExist = payResultService.isOrderExist(orderNo);
-            Log.i("call back : isOrderExit = {?}",isOrderExist.toString());
 
             Boolean isOrderPaid = payResultService.isOrderPaid(orderNo);
-            Log.i("call back : isOrderPaid = {?}",isOrderPaid.toString());
 
             BigDecimal orderFee = payResultService.getOrderFee(orderNo);
             Boolean isValidFee = totalFee.equals((WXPayUtil.getTotalFee(orderFee)).intValue());
-            Log.i("call back : isValidFee = {?}",isValidFee.toString());
 
             //订单不存在 || 订单已支付 || 金额不匹配
             if (!isOrderExist || isOrderPaid || !isValidFee) {

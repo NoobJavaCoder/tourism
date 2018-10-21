@@ -26,14 +26,15 @@ public class PayOrderService {
 
     /**
      * 付款
+     *
      * @param userId:用户id
      * @return:小程序拉起支付需要参数
      */
-    public MiniAppPayParam payOrder(Integer userId,Integer orderId) {
+    public MiniAppPayParam payOrder(Integer userId, Integer orderId) {
 
         TourOrderDetail orderDetail = tourOrderDetailService.getByOrderId(orderId);
 
-        if(orderDetail == null){
+        if (orderDetail == null) {
             throw new BizException("订单不存在");
         }
 
@@ -45,7 +46,7 @@ public class PayOrderService {
 
         String body = this.getPayBody();
 
-        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, new BigDecimal("0.01"), orderSn);
+        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, price, orderSn);
 
         return miniAppPayParam;
     }
@@ -77,7 +78,7 @@ public class PayOrderService {
     }
 
     private static class Constants {
-        private final static String PAY_DESC_BODY = "金豆-旅游产品支付测试";
+        private final static String PAY_DESC_BODY = "旅游产品支付";
     }
 
 

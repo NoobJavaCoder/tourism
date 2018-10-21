@@ -103,4 +103,8 @@
   <update id="updateStateByIdAndFromState" parameterType="map" >
     update e_tour_product set state = #{fromState} where id = #{id} and state = #{toState}
   </update>
+  
+  <select id="selectByLTState" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from e_tour_product where state &lt; #{state}
+  </select>
 </mapper>

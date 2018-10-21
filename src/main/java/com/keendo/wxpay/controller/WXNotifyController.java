@@ -25,9 +25,7 @@ public class WXNotifyController {
     @RequestMapping(value = "/callback", method = RequestMethod.POST)
     @ResponseBody
     public void callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Log.i("wx pay callback begin");
         String xmlRet = WXPayUtil.readXml(request);
-        Log.i("wx pay callback xmlret = {?}",xmlRet);
 
         WXNotifyResp resp = wxPayKitService.callback(xmlRet);
 

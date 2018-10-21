@@ -1,7 +1,5 @@
 package com.keendo.biz.service.bean.tourproduct;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,17 +12,22 @@ public class TourProductItem {
     private String title;//产品标题
     private String coverImgUrl;//封面图
     private Integer tourDay;//出游天数
-    @JsonFormat(pattern = "yyyy年MM月dd日", timezone = "GMT+8")
     private Date deadline;//报名截止日期
-    @JsonFormat(pattern = "yyyy年MM月dd日", timezone = "GMT+8")
     private Date departureTime;//启程时间
-    @JsonFormat(pattern = "yyyy年MM月dd日", timezone = "GMT+8")
     private Date endTime;//结束时间
     private BigDecimal price = new BigDecimal("0");//价格
     private List<String> headImgList = new ArrayList<>();//参团者头像
     private Integer hasOrderedNum;//已下单人数
     private Integer remainNum;//剩余人数
+    private Integer state;
 
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
     public String getCoverImgUrl() {
         return coverImgUrl;

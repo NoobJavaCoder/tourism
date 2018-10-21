@@ -42,4 +42,11 @@ public interface TourProductMapper {
      */
     Integer countByState(Integer state);
 
+
+    /**
+     * 查询小于该状态值的旅游产品
+     * @param state
+     * @return
+     */
+    List<TourProduct> selectByLTState(Integer state);
 }
