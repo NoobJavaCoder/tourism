@@ -53,7 +53,7 @@ public class TourOrderService {
 
 
     //订单保留时间，超过则取消
-    private final static Long ORDER_RETENTION_TIME = 1 * 60 * 1000L;
+    private final static Long ORDER_RETENTION_TIME = 15 * 60 * 1000L;
 
     /**
      * 得到我的订单详细
