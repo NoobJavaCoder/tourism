@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -195,6 +196,56 @@ public class TourProductService {
 
     }
 
+
+    //修改产品状态为满员状态
+    public void reviseFullState(){
+        //  <
+    }
+
+    //修改产品状态为已截止状态
+    public void reviseDeadlineState(){
+
+    }
+
+    //定时修正旅游产品的状态
+    public void reviseTourProductState(){
+        //这块逻辑有问题的...
+//        List<TourProduct> tourProducts = this.getOnGoingStateList();
+//
+//        if(ListUtil.isNotEmpty(tourProducts)){
+//
+//            Iterator<TourProduct> iter = tourProducts.iterator();
+//
+//            while(iter.hasNext()){
+//
+//                TourProduct tp = iter.next();
+//
+//                Integer id = tp.getId();//产品id
+//
+//                Date departureTime = TimeUtils.dateStartTime(tp.getDepartureTime());//产品时间
+//
+//                Integer tourDay = tp.getTourDay();//旅行天数
+//
+//                Date endTime = TimeUtils.dateOffset(departureTime, tourDay);//结束时间
+//
+//                Date now = new Date();//当前时间
+//
+//                Date deadline = tp.getDeadline();
+//
+//                if()
+//
+//                    if(now.compareTo(endTime) >= 0){//超过结束时间
+//
+//                        tourProductService.updateStateById(id,TourProductService.Constants.FINISH_STATE);
+//
+//                    }
+//
+//
+//            }
+//        }
+    }
+
+
     public Integer add(AddTourProduct addTourProduct) {
         TourProduct tourProduct = BeanUtils.copyBean(addTourProduct, TourProduct.class);
 
@@ -256,6 +307,7 @@ public class TourProductService {
 
         public final static Integer ON_GOING_STATE = 1;//进行中
         public final static Integer FULL_STATE = 5;//满员
+        public final static Integer DEADLINE_STATE = 7;//报名已截止
         public final static Integer FINISH_STATE = 9;//旅游结束
         public final static Integer UNSHELVE_STATE = 13;//下架
 

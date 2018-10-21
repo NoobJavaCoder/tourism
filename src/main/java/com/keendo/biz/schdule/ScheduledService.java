@@ -28,37 +28,43 @@ public class ScheduledService {
      * 每分钟执行一次
      * 旅游产品状态检查并修改
      */
-    @Scheduled(cron = "0 0/1 * * * ? ")
-    public void changeTourProductState(){
-
-        List<TourProduct> tourProducts = tourProductService.getOnGoingStateList();
-
-        if(ListUtil.isNotEmpty(tourProducts)){
-
-            Iterator<TourProduct> iter = tourProducts.iterator();
-
-            while(iter.hasNext()){
-
-                TourProduct tp = iter.next();
-
-                Integer id = tp.getId();//产品id
-
-                Date departureTime = TimeUtils.dateStartTime(tp.getDepartureTime());//产品时间
-
-                Integer tourDay = tp.getTourDay();//旅行天数
-
-                Date endTime = TimeUtils.dateOffset(departureTime, tourDay);//结束时间
-
-                Date now = new Date();//当前时间
-
-                if(now.compareTo(endTime) >= 0){//超过结束时间
-
-                    tourProductService.updateStateById(id,TourProductService.Constants.FINISH_STATE);
-
-                }
-            }
-        }
-    }
+//    @Scheduled(cron = "0 0/1 * * * ? ")
+//    public void changeTourProductState(){
+//
+//        List<TourProduct> tourProducts = tourProductService.getOnGoingStateList();
+//
+//        if(ListUtil.isNotEmpty(tourProducts)){
+//
+//            Iterator<TourProduct> iter = tourProducts.iterator();
+//
+//            while(iter.hasNext()){
+//
+//                TourProduct tp = iter.next();
+//
+//                Integer id = tp.getId();//产品id
+//
+//                Date departureTime = TimeUtils.dateStartTime(tp.getDepartureTime());//产品时间
+//
+//                Integer tourDay = tp.getTourDay();//旅行天数
+//
+//                Date endTime = TimeUtils.dateOffset(departureTime, tourDay);//结束时间
+//
+//                Date now = new Date();//当前时间
+//
+//                Date deadline = tp.getDeadline();
+//
+//                if()
+//
+//                if(now.compareTo(endTime) >= 0){//超过结束时间
+//
+//                    tourProductService.updateStateById(id,TourProductService.Constants.FINISH_STATE);
+//
+//                }
+//
+//
+//            }
+//        }
+//    }
 
     /**
      * 关闭未付款的订单

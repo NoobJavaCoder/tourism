@@ -117,7 +117,7 @@ public class WXPayKitService {
 
         unifiedorderParam.setBody(body);
 
-        String totalFee = String.valueOf(WXPayUtil.getTotalFee(amount));
+        Integer totalFee = WXPayUtil.getTotalFee(amount);
         unifiedorderParam.setTotalFee(totalFee);
 
         String createIp = WXPayUtil.getCreateIp();
