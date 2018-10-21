@@ -45,7 +45,7 @@ public class PayOrderService {
 
         String body = this.getPayBody();
 
-        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, price, orderSn);
+        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, new BigDecimal("0.01"), orderSn);
 
         return miniAppPayParam;
     }
