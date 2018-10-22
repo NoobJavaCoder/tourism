@@ -1,10 +1,10 @@
 package com.keendo.wxpay.schedule;
 
 import com.keendo.biz.service.utils.TimeUtils;
-import com.keendo.wxpay.service.IMiniAppConfigService;
-import com.keendo.wxpay.bean.OrderQueryReq;
+import com.keendo.wxpay.bean.OrderQueryParam;
 import com.keendo.wxpay.bean.OrderQueryResp;
 import com.keendo.wxpay.model.PayRecord;
+import com.keendo.wxpay.service.IMiniAppConfigService;
 import com.keendo.wxpay.service.IPayResultService;
 import com.keendo.wxpay.service.PayRecordService;
 import com.keendo.wxpay.service.PayRecordService.Constant;
@@ -74,26 +74,26 @@ public class PayScheduledService {
 
 
             //调用微信api查询订单状态
-            OrderQueryReq req = new OrderQueryReq();
+            OrderQueryParam param = new OrderQueryParam();
 
             String appId = miniAppPayConfigService.getAppId();
-            req.setAppId(appId);
+            param.setAppId(appId);
 
             String mchId = miniAppPayConfigService.getMchId();
-            req.setMchId(mchId);
+            param.setMchId(mchId);
 
             String nonceStr = WXPayUtil.createNonceStr();
-            req.setNonceStr(nonceStr);
+            param.setNonceStr(nonceStr);
 
             String orderSn = record.getOrderSn();//系统订单号
-            req.setOutTradeNo(orderSn);
+            param.setOutTradeNo(orderSn);
 
             String key = miniAppPayConfigService.getMchKey();
-            String sign = WXPayUtil.getSign(req, key);
+            String sign = WXPayUtil.getSign(param, key);
 
-            req.setSign(sign);
+            param.setSign(sign);
 
-            OrderQueryResp orderQueryResp = wxPayKitService.queryOrder(req);
+            OrderQueryResp orderQueryResp = wxPayKitService.queryOrder(param);
 
             String wxTradeState = orderQueryResp.getTradeState();//微信记录的交易状态
 

@@ -6,6 +6,7 @@ import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.wxpay.bean.MiniAppPayParam;
 import com.keendo.wxpay.service.WXPayKitService;
+import com.keendo.wxpay.service.WXPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
 @Service
 public class PayOrderService {
     @Autowired
-    private WXPayKitService wxPayKitService;
+    private WXPayService wxPayService;
 
     @Autowired
     private UserService userService;
@@ -46,7 +47,7 @@ public class PayOrderService {
 
         String body = this.getPayBody();
 
-        MiniAppPayParam miniAppPayParam = wxPayKitService.pay(openId, body, price, orderSn);
+        MiniAppPayParam miniAppPayParam = wxPayService.pay(openId, body, price, orderSn);
 
         return miniAppPayParam;
     }

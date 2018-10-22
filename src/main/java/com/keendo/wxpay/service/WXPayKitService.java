@@ -36,7 +36,7 @@ public class WXPayKitService {
      * @param body:支付信息
      * @param amount:金额(传入金额单位为元)
      * @param orderSn:系统订单编号
-     * @return
+     * @return UnifiedorderParam 统一下单请求参数
      * @throws Exception
      */
     public UnifiedorderParam createUnifiedorderParam(String openId, String body, BigDecimal amount, String orderSn) {
@@ -78,7 +78,7 @@ public class WXPayKitService {
     /**
      * 统一下单
      *
-     * @return
+     * @return UnifiedorderResp 请求结果包装对象
      */
     public UnifiedorderResp unifiedOrder(UnifiedorderParam param) throws BizException {
 
@@ -107,14 +107,14 @@ public class WXPayKitService {
     /**
      * 订单查询
      *
-     * @param req
-     * @return
+     * @param param
+     * @return OrderQueryResp 订单查询结果包装对象
      */
-    public OrderQueryResp queryOrder(OrderQueryReq req) throws BizException {
+    public OrderQueryResp queryOrder(OrderQueryParam param) throws BizException {
 
-        Log.i("【OrderQuery】，request={?}", JsonUtil.toJSon(req));
+        Log.i("【OrderQuery】，request={?}", JsonUtil.toJSon(param));
 
-        String requestXml = XmlBeanUtil.toXml(req);
+        String requestXml = XmlBeanUtil.toXml(param);
 
         String response = HttpUtil.sendPost(Constants.QUERY_ORDER_URL, requestXml);
 
@@ -137,7 +137,7 @@ public class WXPayKitService {
      * 支付回调处理方法
      *
      * @param xmlRet
-     * @return
+     * @return WXNotifyResp 支付回调后响应微信对象
      * @throws Exception
      */
     public WXNotifyResp callback(String xmlRet) {

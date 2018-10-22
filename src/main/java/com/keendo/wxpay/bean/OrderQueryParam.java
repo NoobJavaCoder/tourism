@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * 订单查询请求参数
  */
-public class OrderQueryReq {
+public class OrderQueryParam {
 
     @XStreamAlias("appid")
     private String appId;
