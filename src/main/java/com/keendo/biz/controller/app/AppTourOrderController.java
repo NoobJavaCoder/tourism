@@ -137,4 +137,21 @@ public class AppTourOrderController extends BaseController {
 
         return RespHelper.ok(miniAppPayParam);
     }
+
+    /**
+     * 查询订单是否已经支付
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/ispay", method = RequestMethod.POST)
+    public RespBase checkIsPay(@RequestBody IdReq idReq) {
+        Integer id = idReq.getId();
+
+        Boolean pay = tourOrderService.isPay(id);
+
+        return RespHelper.ok(pay);
+    }
+
+
 }
