@@ -108,11 +108,11 @@ public class TourOrderService {
             }
 
             if (toState.equals(Constants.USER_CANCEL_STATE)) {
-                myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
+                myOrderDetail.setOrderCancelTime(orderOpt.getCreateTime());
             }
 
             if (toState.equals(Constants.SYSTEM_CANCEL_STATE)) {
-                myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
+                myOrderDetail.setOrderCancelTime(orderOpt.getCreateTime());
             }
 
         }
@@ -447,6 +447,21 @@ public class TourOrderService {
                 throw new BizException("取消订单失败");
             }
 
+            orderOptService.add(orderId, Constants.NOT_PAY_STATE, Constants.USER_CANCEL_STATE, userId);
+
+            Integer tourProductId = tourOrder.getTourProductId();
+
+            TourProduct tourProduct = tourProductService.getById(tourProductId);
+
+            //如果满员则改为非满员状态
+            if(tourProduct.getState().equals(TourProductService.Constants.FULL_STATE)){
+                Integer fullStateResult = tourProductService.notFullState(tourProductId);
+
+                if (fullStateResult.equals(0)) {
+                    throw new BizException("产品状态有误");
+                }
+            }
+
             return updateResult;
         });
 
@@ -491,10 +506,10 @@ public class TourOrderService {
         Long time = currentTimeMillis - ORDER_RETENTION_TIME;
 
         Date date = new Date(time);
-        updateByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.SYSTEM_CANCEL_STATE, date);
+        cancelByStateAndCreateTime(Constants.NOT_PAY_STATE, Constants.SYSTEM_CANCEL_STATE, date);
     }
 
-    private Integer updateByStateAndCreateTime(Integer fromState, Integer toState, Date createTime) {
+    private Integer cancelByStateAndCreateTime(Integer fromState, Integer toState, Date createTime) {
         Log.i("cancel tourOrder that is unPaid.");
 
         List<TourOrder> tourOrderList = getByStateAndCreateTime(fromState, createTime);
@@ -506,6 +521,19 @@ public class TourOrderService {
                 updateByFromState(id, fromState, toState);
 
                 orderOptService.addSystemOpt(id, fromState, toState);
+
+                Integer tourProductId = tourOrder.getTourProductId();
+
+                TourProduct tourProduct = tourProductService.getById(tourProductId);
+
+                //如果满员则改为非满员状态
+                if(tourProduct.getState().equals(TourProductService.Constants.FULL_STATE)){
+                    Integer fullStateResult = tourProductService.notFullState(tourProductId);
+
+                    if (fullStateResult.equals(0)) {
+                        throw new BizException("产品状态有误");
+                    }
+                }
 
                 return null;
             });
