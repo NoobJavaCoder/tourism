@@ -107,11 +107,11 @@ public class TourOrderService {
                 myOrderDetail.setOrderPayTime(orderOpt.getCreateTime());
             }
 
-            if (toState.equals(Constants.USER_CANCEL_STATE)){
+            if (toState.equals(Constants.USER_CANCEL_STATE)) {
                 myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
             }
 
-            if (toState.equals(Constants.SYSTEM_CANCEL_STATE)){
+            if (toState.equals(Constants.SYSTEM_CANCEL_STATE)) {
                 myOrderDetail.setOrderCreateTime(orderOpt.getCreateTime());
             }
 
@@ -319,6 +319,20 @@ public class TourOrderService {
         }
 
         return adminProductOrderItemRespList;
+    }
+
+    /**
+     * 获取id为orderId的订单状态是否为已支付状态
+     * @param orderId
+     * @return
+     */
+    public Boolean isPay(Integer orderId) {
+        TourOrder tourOrder = this.getById(orderId);
+        if (tourOrder == null) {
+            throw new BizException("该订单不存在");
+        }
+        Integer state = tourOrder.getState();
+        return Constants.HAS_PAY_STATE.equals(state);
     }
 
     public Integer countByTourProductId(Integer tourProductId) {

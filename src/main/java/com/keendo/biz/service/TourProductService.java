@@ -10,12 +10,14 @@ import com.keendo.biz.service.utils.TimeUtils;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
 import com.keendo.user.service.utils.BeanUtil;
+import com.keendo.wxpay.utils.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -195,6 +197,63 @@ public class TourProductService {
 
     }
 
+
+    /**
+     * 定时修改产品状态为旅行结束状态
+     */
+    public void reviseEndState(){
+        List<TourProduct> tourProducts = tourProductMapper.selectByLTState(Constants.FINISH_STATE);
+
+        if(ListUtil.isEmpty(tourProducts)) return;
+
+        Iterator<TourProduct> iterator = tourProducts.iterator();
+
+        while (iterator.hasNext()){
+            TourProduct tourProduct = iterator.next();
+
+            Date departureTime = TimeUtils.dateStartTime(tourProduct.getDepartureTime());
+
+            Date finishTime = TimeUtils.dateOffset(departureTime,tourProduct.getTourDay());
+
+            Date nowTime = new Date();
+
+            if(nowTime.compareTo(finishTime) > 0){
+
+                tourProduct.setState(Constants.FINISH_STATE);
+
+                this.update(tourProduct);
+            }
+        }
+    }
+
+    /**
+     * 定时修改产品状态为报名已截止状态
+     */
+    public void reviseDeadlineState(){
+        List<TourProduct> tourProducts = tourProductMapper.selectByLTState(Constants.DEADLINE_STATE);
+
+        if(ListUtil.isEmpty(tourProducts)) return;
+
+        Iterator<TourProduct> iterator = tourProducts.iterator();
+
+        while (iterator.hasNext()){
+            TourProduct tourProduct = iterator.next();
+
+            Date deadline = TimeUtils.dateEndTime(tourProduct.getDeadline());
+
+            Date nowTime = new Date();
+
+            if(nowTime.compareTo(deadline) > 0){
+
+                tourProduct.setState(Constants.DEADLINE_STATE);
+
+                this.update(tourProduct);
+            }
+        }
+    }
+
+
+
     public Integer add(AddTourProduct addTourProduct) {
         TourProduct tourProduct = BeanUtils.copyBean(addTourProduct, TourProduct.class);
 
@@ -256,6 +315,7 @@ public class TourProductService {
 
         public final static Integer ON_GOING_STATE = 1;//进行中
         public final static Integer FULL_STATE = 5;//满员
+        public final static Integer DEADLINE_STATE = 7;//报名已截止
         public final static Integer FINISH_STATE = 9;//旅游结束
         public final static Integer UNSHELVE_STATE = 13;//下架
 

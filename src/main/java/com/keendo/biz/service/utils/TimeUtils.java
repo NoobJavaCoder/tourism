@@ -75,6 +75,22 @@ public class TimeUtils {
     }
 
     /**
+     * 时间推移minutes分钟，minutes为正往后推，minutes为负往前推
+     * @param date
+     * @param minutes 为正，往后推。
+     * @return
+     */
+    public static Date minuteOffset(Date date,int minutes){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE,minutes);
+
+        Date mewDate = calendar.getTime();
+
+        return mewDate;
+    }
+
+    /**
      * 取date当周的开始时间
      * @param date yyyy-MM-dd 00:00:00
      * @return
@@ -308,4 +324,5 @@ public class TimeUtils {
         java.text.DateFormat format = new SimpleDateFormat(sFormat);
         return format.format(date);
     }
+
 }

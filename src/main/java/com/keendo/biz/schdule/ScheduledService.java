@@ -1,18 +1,12 @@
 package com.keendo.biz.schdule;
 
-import com.keendo.biz.model.TourProduct;
+import com.keendo.architecture.utils.Log;
 import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.TourProductService;
-import com.keendo.biz.service.utils.ListUtil;
-import com.keendo.biz.service.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 @Async
 @Component
@@ -25,46 +19,28 @@ public class ScheduledService {
     private TourOrderService tourOrderService;
 
     /**
-     * 每分钟执行一次
-     * 旅游产品状态检查并修改
+     * 修改到达旅行结束时间的产品的状态
      */
     @Scheduled(cron = "0 0/1 * * * ? ")
-    public void changeTourProductState(){
+    public void reviseEndStateTourProduct() {
+        Log.i("task : revise end state for tour product ");
+        tourProductService.reviseEndState();
+    }
 
-        List<TourProduct> tourProducts = tourProductService.getOnGoingStateList();
-
-        if(ListUtil.isNotEmpty(tourProducts)){
-
-            Iterator<TourProduct> iter = tourProducts.iterator();
-
-            while(iter.hasNext()){
-
-                TourProduct tp = iter.next();
-
-                Integer id = tp.getId();//产品id
-
-                Date departureTime = TimeUtils.dateStartTime(tp.getDepartureTime());//产品时间
-
-                Integer tourDay = tp.getTourDay();//旅行天数
-
-                Date endTime = TimeUtils.dateOffset(departureTime, tourDay);//结束时间
-
-                Date now = new Date();//当前时间
-
-                if(now.compareTo(endTime) >= 0){//超过结束时间
-
-                    tourProductService.updateStateById(id,TourProductService.Constants.FINISH_STATE);
-
-                }
-            }
-        }
+    /**
+     * 修改到达报名截止时间的产品的状态
+     */
+    @Scheduled(cron = "0 0/1 * * * ? ")
+    public void reviseDeadlineStateTourProduct() {
+        Log.i("task : revise dealine state for tour product");
+        tourProductService.reviseDeadlineState();
     }
 
     /**
      * 关闭未付款的订单
      */
     @Scheduled(cron = "0 0/1 * * * ? ")
-    public void closeUnPaidTourOrder(){
+    public void closeUnPaidTourOrder() {
         tourOrderService.cancelUnPaidTourOrder();
     }
 

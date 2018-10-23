@@ -2,19 +2,14 @@ package com.keendo.wxpay.service;
 
 import com.keendo.wxpay.bean.*;
 import com.keendo.wxpay.exception.BizException;
-import com.keendo.wxpay.model.PayRecord;
 import com.keendo.wxpay.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Service
 public class WXPayKitService {
@@ -33,56 +28,6 @@ public class WXPayKitService {
     private IMiniAppConfigService miniAppPayConfigService;
 
 
-    /**
-     * 支付
-     *
-     * @param openId:付款方用户openId
-     * @param body:支付信息,商品描述   例:腾讯充值中心-QQ会员充值
-     * @param amount:金额(传入金额单位为元)
-     * @param orderSn:系统订单编号(32位以内,系统唯一,字母数字的字符串)
-     * @return : 小程序端拉起支付需要的参数
-     */
-    public MiniAppPayParam pay(String openId, String body, BigDecimal amount, String orderSn) {
-
-        UnifiedorderParam unifiedorderParam = this.createUnifiedorderParam(openId, body, amount, orderSn);
-
-        MiniAppPayParam miniAppPayParam = transactionTemplate.execute(new TransactionCallback<MiniAppPayParam>() {
-            @Override
-            public MiniAppPayParam doInTransaction(TransactionStatus transactionStatus) {
-
-                // 支付记录表中新增一条支付记录
-                PayRecord payRecord = new PayRecord();
-
-                payRecord.setAmount(amount);
-                payRecord.setOpenId(openId);
-                payRecord.setOrderSn(orderSn);
-                payRecord.setStatus(PayRecordService.Constant.NOT_PAY);
-                payRecord.setCreateTime(new Date());
-                payRecord.setUpdateTime(new Date());
-
-                Integer recordId = payRecordService.add(payRecord);
-
-
-                // 调用统一下单接口
-                // 1 更新支付记录对象,设置预支付id,用于后续发送模板消息
-                UnifiedorderResp unifiedorderResp = unifiedOrder(unifiedorderParam);
-                String prepayId = unifiedorderResp.getPrepayId();
-                PayRecord pr = payRecordService.getById(recordId);
-                pr.setPrepayId(prepayId);
-                payRecordService.update(pr);
-
-                //2 构建返回参数
-                String appId = miniAppPayConfigService.getAppId();
-                String nonceStr = WXPayUtil.createNonceStr();
-
-                MiniAppPayParam miniAppPayParam = createMiniAppPayParam(appId, nonceStr, prepayId);
-
-                return miniAppPayParam;
-            }
-        });
-
-        return miniAppPayParam;
-    }
 
     /**
      * 生成调用微信统一下单接口的请求参数
@@ -91,10 +36,10 @@ public class WXPayKitService {
      * @param body:支付信息
      * @param amount:金额(传入金额单位为元)
      * @param orderSn:系统订单编号
-     * @return
+     * @return UnifiedorderParam 统一下单请求参数
      * @throws Exception
      */
-    private UnifiedorderParam createUnifiedorderParam(String openId, String body, BigDecimal amount, String orderSn) {
+    public UnifiedorderParam createUnifiedorderParam(String openId, String body, BigDecimal amount, String orderSn) {
         UnifiedorderParam unifiedorderParam = new UnifiedorderParam();
 
         String appId = miniAppPayConfigService.getAppId();
@@ -117,7 +62,7 @@ public class WXPayKitService {
 
         unifiedorderParam.setBody(body);
 
-        String totalFee = String.valueOf(WXPayUtil.getTotalFee(amount));
+        Integer totalFee = WXPayUtil.getTotalFee(amount);
         unifiedorderParam.setTotalFee(totalFee);
 
         String createIp = WXPayUtil.getCreateIp();
@@ -133,9 +78,9 @@ public class WXPayKitService {
     /**
      * 统一下单
      *
-     * @return
+     * @return UnifiedorderResp 请求结果包装对象
      */
-    private UnifiedorderResp unifiedOrder(UnifiedorderParam param) throws BizException {
+    public UnifiedorderResp unifiedOrder(UnifiedorderParam param) throws BizException {
 
         Log.i("【WX Pay】，request = {?}", JsonUtil.toJSon(param));
 
@@ -162,14 +107,14 @@ public class WXPayKitService {
     /**
      * 订单查询
      *
-     * @param req
-     * @return
+     * @param param
+     * @return OrderQueryResp 订单查询结果包装对象
      */
-    public OrderQueryResp queryOrder(OrderQueryReq req) throws BizException {
+    public OrderQueryResp queryOrder(OrderQueryParam param) throws BizException {
 
-        Log.i("【OrderQuery】，request={?}", JsonUtil.toJSon(req));
+        Log.i("【OrderQuery】，request={?}", JsonUtil.toJSon(param));
 
-        String requestXml = XmlBeanUtil.toXml(req);
+        String requestXml = XmlBeanUtil.toXml(param);
 
         String response = HttpUtil.sendPost(Constants.QUERY_ORDER_URL, requestXml);
 
@@ -192,10 +137,9 @@ public class WXPayKitService {
      * 支付回调处理方法
      *
      * @param xmlRet
-     * @return
+     * @return WXNotifyResp 支付回调后响应微信对象
      * @throws Exception
      */
-    @Transactional
     public WXNotifyResp callback(String xmlRet) {
         String key = miniAppPayConfigService.getMchKey();
 
@@ -255,7 +199,7 @@ public class WXPayKitService {
      *
      * @return
      */
-    private  MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId) {
+    public  MiniAppPayParam createMiniAppPayParam(String appId, String nonceStr, String prepayId) {
         PaySignature paySignature = new PaySignature(appId, nonceStr, prepayId);
 
         MiniAppPayParam miniAppPayParam = BeanUtil.copyBean(paySignature, MiniAppPayParam.class);
@@ -269,27 +213,7 @@ public class WXPayKitService {
         return miniAppPayParam;
     }
 
-    /**
-     * 响应微信
-     *
-     * @param response
-     * @throws Exception
-     */
-    private void ok(HttpServletResponse response) throws Exception {
-        String xml = XmlBeanUtil.toXmlWithCData(WXNotifyResp.fail());
-        WXPayUtil.writeXml(response, xml);
-    }
 
-    /**
-     * 响应微信
-     *
-     * @param response
-     * @throws Exception
-     */
-    private void fail(HttpServletResponse response) throws Exception {
-        String xml = XmlBeanUtil.toXmlWithCData(WXNotifyResp.ok());
-        WXPayUtil.writeXml(response, xml);
-    }
 
     public static class Constants {
         private static final String UNIFIED_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单api地址

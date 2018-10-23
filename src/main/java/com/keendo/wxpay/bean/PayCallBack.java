@@ -182,4 +182,26 @@ public class PayCallBack {
     public void setTradeState(String tradeState) {
         this.tradeState = tradeState;
     }
+
+    @Override
+    public String toString() {
+        return "PayCallBack{" +
+                "returnCode='" + returnCode + '\'' +
+                ", returnMsg='" + returnMsg + '\'' +
+                ", resultCode='" + resultCode + '\'' +
+                ", appId='" + appId + '\'' +
+                ", mchId='" + mchId + '\'' +
+                ", nonceStr='" + nonceStr + '\'' +
+                ", sign='" + sign + '\'' +
+                ", openId='" + openId + '\'' +
+                ", tradeType='" + tradeType + '\'' +
+                ", totalFee=" + totalFee +
+                ", transactionId='" + transactionId + '\'' +
+                ", outTradeNo='" + outTradeNo + '\'' +
+                ", timeEnd='" + timeEnd + '\'' +
+                ", tradeState='" + tradeState + '\'' +
+                ", errCode='" + errCode + '\'' +
+                ", errCodeDes='" + errCodeDes + '\'' +
+                '}';
+    }
 }

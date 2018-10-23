@@ -5,6 +5,7 @@ import com.keendo.wxpay.model.PayRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -66,6 +67,7 @@ public class PayRecordService {
         PayRecord payRecord = getByOrderSn(orderSn);
         payRecord.setTransactionId(transactionId);
         payRecord.setStatus(Constant.SUCCESS_PAY);
+        payRecord.setUpdateTime(new Date());
         this.update(payRecord);
     }
 

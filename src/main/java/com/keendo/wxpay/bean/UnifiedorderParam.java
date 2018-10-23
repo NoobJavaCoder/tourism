@@ -44,7 +44,7 @@ public class UnifiedorderParam {
 
     /*支付金额*/
     @XStreamAlias("total_fee")
-    private String totalFee;
+    private Integer totalFee;
 
     /*回调地址*/
     @XStreamAlias("notify_url")
@@ -130,11 +130,11 @@ public class UnifiedorderParam {
         this.goodsTag = goodsTag;
     }
 
-    public String getTotalFee() {
+    public Integer getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(String totalFee) {
+    public void setTotalFee(Integer totalFee) {
         this.totalFee = totalFee;
     }
 
