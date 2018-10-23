@@ -11,6 +11,15 @@ public class TourProductItemDetail {
     private Integer remainNum;//剩余人数
     private String wxPubUrl;//公众号链接
     private Integer state;
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public Integer getState() {
         return state;
