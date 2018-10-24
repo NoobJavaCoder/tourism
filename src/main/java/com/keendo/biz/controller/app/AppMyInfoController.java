@@ -40,24 +40,24 @@ public class AppMyInfoController extends BaseController {
         UserInfo userInfo = BeanUtils.copyBean(req, UserInfo.class);
 
         String phoneNo = userInfo.getPhoneNo();
-        if(!VerifyUtil.isPhone(phoneNo)){
-            return RespHelper.failed("请填写正确的手机号码!");
-        }
+//        if(!VerifyUtil.isPhone(phoneNo)){
+//            return RespHelper.failed("请填写正确的手机号码!");
+//        }
 
         String verifyCode = req.getVerifyCode();
         if(!phoneVerificationCodeService.verifyUsable(phoneNo,verifyCode,Constants.MY_INFO_PHONE_TYPE)){
             return RespHelper.failed("验证码错误");
         }
 
-        String realName = userInfo.getRealName();
-        if(!VerifyUtil.isRealName(realName)){
-            return RespHelper.failed("请填写完整的真实姓名!");
-        }
-
-        String idCardNo = userInfo.getIdCardNo();
-        if(!VerifyUtil.isIdCard(idCardNo)){
-            return RespHelper.failed("请填写正确的身份证号码!");
-        }
+//        String realName = userInfo.getRealName();
+//        if(!VerifyUtil.isRealName(realName)){
+//            return RespHelper.failed("请填写完整的真实姓名!");
+//        }
+//
+//        String idCardNo = userInfo.getIdCardNo();
+//        if(!VerifyUtil.isIdCard(idCardNo)){
+//            return RespHelper.failed("请填写正确的身份证号码!");
+//        }
 
         userInfo.setUserId(userId);
 

@@ -82,8 +82,8 @@ public class UserInfoService {
             userInfo.setNickname(nickname);
             this.save(userInfo);
         } else {
-
-            this.update(userInfo);
+            BeanUtils.copyPropertiesIgnoreNull(userInfo,info);
+            this.update(info);
         }
 
 
