@@ -303,6 +303,15 @@ public class TourProductService {
         return this.updateStateByIdAndFromState(id, Constants.ON_GOING_STATE, Constants.FULL_STATE);
     }
 
+    /**
+     * 修改为不满员状态
+     * @param id
+     * @return
+     */
+    public Integer notFullState(Integer id){
+        return this.updateStateByIdAndFromState(id, Constants.FULL_STATE, Constants.ON_GOING_STATE);
+    }
+
     private Integer updateStateByIdAndFromState(Integer id, Integer fromState, Integer toState) {
         return tourProductMapper.updateStateByIdAndFromState(id, fromState, toState);
     }
