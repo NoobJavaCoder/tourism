@@ -18,6 +18,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -323,6 +324,7 @@ public class TourOrderService {
 
     /**
      * 获取id为orderId的订单状态是否为已支付状态
+     *
      * @param orderId
      * @return
      */
@@ -335,16 +337,56 @@ public class TourOrderService {
         return Constants.HAS_PAY_STATE.equals(state);
     }
 
+    /**
+     * 查询旅游产品id为tourProductId的任意状态的订单总数
+     *
+     * @param tourProductId
+     * @return
+     */
     public Integer countByTourProductId(Integer tourProductId) {
         return tourOrderMapper.countByTourProductId(tourProductId);
     }
 
-    public Integer countUnPaidByTourProductId(Integer tourProductId) {
-        return tourOrderMapper.countByTourProductIdAndState(tourProductId, Constants.NOT_PAY_STATE);
+    /**
+     * 根据旅游产品id和订单状态(>=1种状态)统计订单数量
+     *
+     * @param tourProductId
+     * @param state
+     * @return
+     */
+    private Integer countByTourProductIdAndStates(Integer tourProductId, Integer... state) {
+        List<Integer> states = Arrays.asList(state);
+        return tourOrderMapper.countByTourProductIdAndStates(tourProductId, states);
     }
 
+    /**
+     * 获取旅游产品id为tourProductId且已下单(已报名)的订单数量
+     *
+     * @param tourProductId:产品id
+     * @return
+     */
+    public Integer countHasOrderByTourProductId(Integer tourProductId) {
+        return this.countByTourProductIdAndStates(tourProductId, Constants.HAS_PAY_STATE, Constants.NOT_PAY_STATE);
+    }
+
+    /**
+     * 获取旅游产品id为tourProductId,状态为未付款的订单数量
+     *
+     * @param tourProductId:产品id
+     * @return
+     */
+    public Integer countUnPaidByTourProductId(Integer tourProductId) {
+        return this.countByTourProductIdAndStates(tourProductId, Constants.NOT_PAY_STATE);
+    }
+
+    /**
+     * 获取旅游产品id为tourProductId,状态为已付款的订单数量
+     *
+     * @param tourProductId:产品id
+     * @return
+     */
     public Integer countHasPaidByTourProductId(Integer tourProductId) {
-        return tourOrderMapper.countByTourProductIdAndState(tourProductId, Constants.HAS_PAY_STATE);
+        return this.countByTourProductIdAndStates(tourProductId, Constants.HAS_PAY_STATE);
     }
 
     public TourOrder getById(Integer id) {

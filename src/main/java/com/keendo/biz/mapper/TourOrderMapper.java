@@ -22,20 +22,28 @@ public interface TourOrderMapper {
 
     int countByTourProductId(Integer tourProductId);
 
-    int countByTourProductIdAndState(@Param("tourProductId") Integer tourProductId, @Param("state") Integer state);
+    List<TourOrder> selectByStateAndCreateTime(@Param("state") Integer state, @Param("createTime") Date createTime);
 
-    List<TourOrder>  selectByStateAndCreateTime(@Param("state") Integer state  ,@Param("createTime") Date createTime );
+    List<TourOrder> selectByProductIdAndUserId(@Param("productId") Integer productId, @Param("userId") Integer userId);
 
-    List<TourOrder> selectByProductIdAndUserId(@Param("productId") Integer productId ,@Param("userId") Integer userId);
-
-    List<TourOrder> selectPageBydAndUserId(@Param("userId") Integer userId ,@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize);
+    List<TourOrder> selectPageBydAndUserId(@Param("userId") Integer userId, @Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
 
     /**
      * 查询下了订单的用户id集合
+     *
      * @param tourProductId:旅游产品id
      * @param state1:下单未付款
      * @param state2:已付款
      * @return
      */
-    List<Integer> selectOrderedUserIdList(@Param("tourProductId") Integer tourProductId, @Param("state1") Integer state1,@Param("state2")Integer state2);
+    List<Integer> selectOrderedUserIdList(@Param("tourProductId") Integer tourProductId, @Param("state1") Integer state1, @Param("state2") Integer state2);
+
+
+    /**
+     * 根据旅游产品id和1种或多种状态值查询订单数量
+     * @param tourProductId
+     * @param states
+     * @return
+     */
+    Integer countByTourProductIdAndStates(@Param("tourProductId") Integer tourProductId, @Param("states") List<Integer> states);
 }

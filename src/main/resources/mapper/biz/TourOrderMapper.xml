@@ -1,15 +1,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.keendo.biz.mapper.TourOrderMapper">
     <resultMap id="baseResultMap" type="com.keendo.biz.model.TourOrder">
-        <result column="id" property="id" jdbcType="INTEGER" />
-        <result column="tour_product_id" property="tourProductId" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="state" property="state" jdbcType="INTEGER" />
-        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="tour_product_id" property="tourProductId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
         <result column="order_sn" property="orderSn" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <sql id="Base_Column_List" >
+    <sql id="Base_Column_List">
         `id` , `tour_product_id` , `create_time` , `state` , `user_id` ,`order_sn`
     </sql>
 
@@ -23,13 +23,13 @@
 
     <select id="selectByTourProductId" parameterType="map" resultMap="baseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            e_tour_order
+        e_tour_order
         WHERE
-            tour_product_id = #{tourProductId}
+        tour_product_id = #{tourProductId}
         limit
-            #{startIndex} ,#{pageSize}
+        #{startIndex} ,#{pageSize}
     </select>
 
 
@@ -40,15 +40,6 @@
         e_tour_order
         WHERE
         tour_product_id = #{tourProductId}
-    </select>
-
-    <select id="countByTourProductIdAndState" parameterType="map" resultType="java.lang.Integer">
-        SELECT
-            count(id)
-        FROM
-        e_tour_order
-        WHERE
-        tour_product_id = #{tourProductId} and state = #{state}
     </select>
 
 
@@ -65,11 +56,11 @@
 
     <select id="selectById" resultMap="baseResultMap" parameterType="map">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            e_tour_order
+        e_tour_order
         WHERE
-            id = #{id}
+        id = #{id}
     </select>
 
     <select id="selectByOrderSn" resultMap="baseResultMap" parameterType="map">
@@ -80,8 +71,8 @@
         WHERE
         order_sn = #{orderSn}
     </select>
-    
-    <update id="updateByStateAndCreateTime" parameterType="map" >
+
+    <update id="updateByStateAndCreateTime" parameterType="map">
         UPDATE
             e_tour_order
         SET
@@ -93,7 +84,7 @@
     </update>
 
 
-    <select id="selectByStateAndCreateTime" parameterType="map" resultMap="baseResultMap" >
+    <select id="selectByStateAndCreateTime" parameterType="map" resultMap="baseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM
@@ -123,13 +114,20 @@
 
     <select id="selectPageBydAndUserId" resultMap="baseResultMap" parameterType="map">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from
-            e_tour_order
+        e_tour_order
         where
-            user_id = #{userId}
+        user_id = #{userId}
         order by create_time desc
         limit #{startIndex} ,#{pageSize}
+    </select>
+
+    <select id="countByTourProductIdAndStates" resultType="java.lang.Integer">
+        select count(id)from e_tour_order where tour_product_id = #{tourProductId} and state in
+        <foreach collection="states" item="state" index="index" separator=",">
+            (#{item})
+        </foreach>
     </select>
 
 </mapper>

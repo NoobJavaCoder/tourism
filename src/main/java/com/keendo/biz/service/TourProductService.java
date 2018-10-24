@@ -42,7 +42,7 @@ public class TourProductService {
         TourProductItemDetail tourProductItemDetail = BeanUtils.copyBean(tourProduct, TourProductItemDetail.class);
 
         //已下单人数
-        Integer hasOrderedNum = tourOrderService.countByTourProductId(tourProductId);
+        Integer hasOrderedNum = tourOrderService.countHasOrderByTourProductId(tourProductId);
         tourProductItemDetail.setHasOrderedNum(hasOrderedNum);
 
         //剩余人数
@@ -86,7 +86,7 @@ public class TourProductService {
 
                 //已下单人数
                 Integer tourProductId = tourProduct.getId();
-                Integer hasOrderedNum = tourOrderService.countByTourProductId(tourProductId);
+                Integer hasOrderedNum = tourOrderService.countHasOrderByTourProductId(tourProductId);
                 item.setHasOrderedNum(hasOrderedNum);
 
                 //剩余人数
@@ -136,7 +136,7 @@ public class TourProductService {
 
                 Integer id = tourProduct.getId();
 
-                Integer count = tourOrderService.countByTourProductId(id);//已报名人数
+                Integer count = tourOrderService.countHasOrderByTourProductId(id);//已报名人数
 
                 resp.setHasEnteredNum(count);
 
