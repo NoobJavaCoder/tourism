@@ -19,8 +19,6 @@ public interface TourProductMapper {
 
     int deleteById(Integer id);
 
-    List<TourProduct> selectByState(Integer state);
-
     int updateStateById(@Param("state") Integer state, @Param("id") Integer id);
 
     int updateStateByIdAndFromState(@Param("fromState") Integer fromState, @Param("id") Integer id, @Param("toState") Integer state);

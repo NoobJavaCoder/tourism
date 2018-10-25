@@ -678,4 +678,5 @@ public class TourOrderService {
 
         private final static Integer ORDER_SN_LENGTH = 32;//系统订单号位数
     }
+
 }

@@ -9,8 +9,6 @@ import com.keendo.biz.service.utils.ListUtil;
 import com.keendo.biz.service.utils.TimeUtils;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
-import com.keendo.user.service.utils.BeanUtil;
-import com.keendo.wxpay.utils.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +34,7 @@ public class TourProductService {
     private UserService userService;
 
 
-    public TourProductItemDetail getAppTourProductDetail(Integer tourProductId){
+    public TourProductItemDetail getAppTourProductDetail(Integer tourProductId) {
         TourProduct tourProduct = this.getById(tourProductId);
 
         TourProductItemDetail tourProductItemDetail = BeanUtils.copyBean(tourProduct, TourProductItemDetail.class);
@@ -201,23 +199,23 @@ public class TourProductService {
     /**
      * 定时修改产品状态为旅行结束状态
      */
-    public void reviseEndState(){
+    public void reviseEndState() {
         List<TourProduct> tourProducts = tourProductMapper.selectByLTState(Constants.FINISH_STATE);
 
-        if(ListUtil.isEmpty(tourProducts)) return;
+        if (ListUtil.isEmpty(tourProducts)) return;
 
         Iterator<TourProduct> iterator = tourProducts.iterator();
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             TourProduct tourProduct = iterator.next();
 
             Date departureTime = TimeUtils.dateStartTime(tourProduct.getDepartureTime());
 
-            Date finishTime = TimeUtils.dateOffset(departureTime,tourProduct.getTourDay());
+            Date finishTime = TimeUtils.dateOffset(departureTime, tourProduct.getTourDay());
 
             Date nowTime = new Date();
 
-            if(nowTime.compareTo(finishTime) > 0){
+            if (nowTime.compareTo(finishTime) > 0) {
 
                 tourProduct.setState(Constants.FINISH_STATE);
 
@@ -229,21 +227,21 @@ public class TourProductService {
     /**
      * 定时修改产品状态为报名已截止状态
      */
-    public void reviseDeadlineState(){
+    public void reviseDeadlineState() {
         List<TourProduct> tourProducts = tourProductMapper.selectByLTState(Constants.DEADLINE_STATE);
 
-        if(ListUtil.isEmpty(tourProducts)) return;
+        if (ListUtil.isEmpty(tourProducts)) return;
 
         Iterator<TourProduct> iterator = tourProducts.iterator();
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             TourProduct tourProduct = iterator.next();
 
             Date deadline = TimeUtils.dateEndTime(tourProduct.getDeadline());
 
             Date nowTime = new Date();
 
-            if(nowTime.compareTo(deadline) > 0){
+            if (nowTime.compareTo(deadline) > 0) {
 
                 tourProduct.setState(Constants.DEADLINE_STATE);
 
@@ -251,7 +249,6 @@ public class TourProductService {
             }
         }
     }
-
 
 
     public Integer add(AddTourProduct addTourProduct) {
@@ -275,14 +272,6 @@ public class TourProductService {
         return tourProductMapper.insert(tourProduct);
     }
 
-    /**
-     * 获取所有正在进行中状态的产品List
-     *
-     * @return
-     */
-    public List<TourProduct> getOnGoingStateList() {
-        return tourProductMapper.selectByState(Constants.ON_GOING_STATE);
-    }
 
     /**
      * 更新旅游产品的状态
@@ -305,10 +294,11 @@ public class TourProductService {
 
     /**
      * 修改为不满员状态
+     *
      * @param id
      * @return
      */
-    public Integer notFullState(Integer id){
+    public Integer notFullState(Integer id) {
         return this.updateStateByIdAndFromState(id, Constants.FULL_STATE, Constants.ON_GOING_STATE);
     }
 

@@ -92,9 +92,6 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   
-  <select id="selectByState" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> from e_tour_product where state = #{state}
-  </select>
 
   <update id="updateStateById">
     update e_tour_product set state = #{state} where id = #{id}

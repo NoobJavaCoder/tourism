@@ -101,4 +101,5 @@ public class AppMyInfoController extends BaseController {
         phoneVerificationCodeService.addMyInofVerificationCode(phoneNumber);
         return RespHelper.ok();
     }
+
 }
