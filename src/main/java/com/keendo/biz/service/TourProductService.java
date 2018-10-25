@@ -70,9 +70,9 @@ public class TourProductService {
                 if(tourOrderState.equals(TourOrderService.Constants.HAS_PAY_STATE )|| tourOrderState.equals(TourOrderService.Constants.NOT_PAY_STATE ) ){
                     //订单状态
                     tourProductItemDetail.setOrderState(tourOrderState);
-                    //订单号
-                    String orderSn = tourOrder.getOrderSn();
-                    tourProductItemDetail.setOrderSn(orderSn);
+                    //订单id
+                    Integer orderId = tourOrder.getId();
+                    tourProductItemDetail.setOrderId(orderId);
                 }
             }
         }

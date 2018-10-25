@@ -13,14 +13,14 @@ public class TourProductItemDetail {
     private Integer state;
     private String title;
     private Integer orderState;
-    private String orderSn;
+    private Integer orderId;
 
-    public String getOrderSn() {
-        return orderSn;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setOrderSn(String orderSn) {
-        this.orderSn = orderSn;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     public Integer getOrderState() {
