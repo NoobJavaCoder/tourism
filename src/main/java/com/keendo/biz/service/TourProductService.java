@@ -2,6 +2,7 @@ package com.keendo.biz.service;
 
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.mapper.TourProductMapper;
+import com.keendo.biz.model.TourOrder;
 import com.keendo.biz.model.TourProduct;
 import com.keendo.biz.service.bean.tourproduct.*;
 import com.keendo.biz.service.utils.BeanUtils;
@@ -34,7 +35,7 @@ public class TourProductService {
     private UserService userService;
 
 
-    public TourProductItemDetail getAppTourProductDetail(Integer tourProductId) {
+    public TourProductItemDetail getAppTourProductDetail(Integer tourProductId ,Integer userId){
         TourProduct tourProduct = this.getById(tourProductId);
 
         TourProductItemDetail tourProductItemDetail = BeanUtils.copyBean(tourProduct, TourProductItemDetail.class);
@@ -51,15 +52,32 @@ public class TourProductService {
         List<Integer> orderedUserIdList = tourOrderService.getOrderedUserIdList(tourProductId);
         List<String> headImgList = new ArrayList<>();
         if (ListUtil.isNotEmpty(orderedUserIdList)) {
-            for (Integer userId : orderedUserIdList) {
-                User user = userService.getById(userId);
-                if (user != null) {
-                    String headImg = user.getHeadImgUrl();
+            for (Integer participantId : orderedUserIdList) {
+                User participant = userService.getById(participantId);
+                if (participant != null) {
+                    String headImg = participant.getHeadImgUrl();
                     headImgList.add(headImg);
                 }
             }
         }
         tourProductItemDetail.setHeadImgList(headImgList);
+
+        if(userId != null){
+            List<TourOrder> tourOrderList = tourOrderService.getByProductIdAndUserId(tourProductId, userId);
+
+            for(TourOrder tourOrder : tourOrderList){
+                Integer tourOrderState = tourOrder.getState();
+                if(tourOrderState.equals(TourOrderService.Constants.HAS_PAY_STATE )|| tourOrderState.equals(TourOrderService.Constants.NOT_PAY_STATE ) ){
+                    //订单状态
+                    tourProductItemDetail.setOrderState(tourOrderState);
+                    //订单号
+                    String orderSn = tourOrder.getOrderSn();
+                    tourProductItemDetail.setOrderSn(orderSn);
+                }
+            }
+        }
+
+
 
         return tourProductItemDetail;
     }

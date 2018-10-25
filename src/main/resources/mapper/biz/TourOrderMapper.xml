@@ -123,6 +123,7 @@
         limit #{startIndex} ,#{pageSize}
     </select>
 
+
     <select id="countByTourProductIdAndStates" resultType="java.lang.Integer">
         select count(id)from e_tour_order where tour_product_id = #{tourProductId} and state in
         <foreach collection="states" item="state" index="index" open="(" separator="," close=")">

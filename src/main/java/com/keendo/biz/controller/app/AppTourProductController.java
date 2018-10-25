@@ -50,7 +50,9 @@ public class AppTourProductController extends BaseController{
 
         Integer tourProductId = idReq.getId();
 
-        TourProductItemDetail appTourProductDetail = tourProductService.getAppTourProductDetail(tourProductId);
+        Integer userId = getUserId();
+
+        TourProductItemDetail appTourProductDetail = tourProductService.getAppTourProductDetail(tourProductId ,userId);
 
         return RespHelper.ok(appTourProductDetail);
     }
