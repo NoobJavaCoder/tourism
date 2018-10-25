@@ -594,7 +594,7 @@ public class TourOrderService {
         return tourOrderMapper.selectByStateAndCreateTime(state, createTime);
     }
 
-    private List<TourOrder> getByProductIdAndUserId(Integer tourOrder, Integer userId) {
+    public List<TourOrder> getByProductIdAndUserId(Integer tourOrder, Integer userId) {
         return tourOrderMapper.selectByProductIdAndUserId(tourOrder, userId);
     }
 
@@ -669,9 +669,12 @@ public class TourOrderService {
         return myOrderItemList;
     }
 
-    private static class Constants {
-        private final static Integer NOT_PAY_STATE = 0;//未付款
-        private final static Integer HAS_PAY_STATE = 1;//已经付款
+
+
+
+    public static class Constants {
+        protected final static Integer NOT_PAY_STATE = 0;//未付款
+        protected final static Integer HAS_PAY_STATE = 1;//已经付款
         private final static Integer USER_CANCEL_STATE = 2;//用户取消
         private final static Integer HAS_RETURN_STATE = 3;//已经退款
         private final static Integer SYSTEM_CANCEL_STATE = 4;//系统取消

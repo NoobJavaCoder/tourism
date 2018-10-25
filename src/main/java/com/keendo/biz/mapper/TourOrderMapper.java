@@ -46,4 +46,5 @@ public interface TourOrderMapper {
      * @return
      */
     Integer countByTourProductIdAndStates(@Param("tourProductId") Integer tourProductId, @Param("states") List<Integer> states);
+
 }

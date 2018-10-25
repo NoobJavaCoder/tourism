@@ -12,6 +12,15 @@ public class TourProductItemDetail {
     private String wxPubUrl;//公众号链接
     private Integer state;
     private String title;
+    private Integer orderState;
+
+    public Integer getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(Integer orderState) {
+        this.orderState = orderState;
+    }
 
     public String getTitle() {
         return title;
