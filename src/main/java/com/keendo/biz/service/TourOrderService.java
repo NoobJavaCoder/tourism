@@ -662,6 +662,10 @@ public class TourOrderService {
             Integer state = tourOrder.getState();
             myOrderItem.setTourOrderState(state);
 
+            //订单创建时间
+            Date createTime = tourOrder.getCreateTime();
+            myOrderItem.setCreateTime(createTime);
+
             myOrderItemList.add(myOrderItem);
 
         }
