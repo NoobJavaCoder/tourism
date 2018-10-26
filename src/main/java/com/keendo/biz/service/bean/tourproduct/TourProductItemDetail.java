@@ -15,6 +15,15 @@ public class TourProductItemDetail {
     private Integer orderState;
     private Integer orderId;
     private String coverImgUrl;
+    private String detailHtml;
+
+    public String getDetailHtml() {
+        return detailHtml;
+    }
+
+    public void setDetailHtml(String detailHtml) {
+        this.detailHtml = detailHtml;
+    }
 
     public String getCoverImgUrl() {
         return coverImgUrl;

@@ -20,6 +20,7 @@
 
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.keendo.biz.model.TourProduct">
     <result column="tour_summary" jdbcType="LONGVARCHAR" property="tourSummary" />
+    <result column="detail_html" jdbcType="LONGVARCHAR" property="detailHtml" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -27,14 +28,14 @@
   </sql>
 
   <sql id="Blob_Column_List">
-    `tour_summary`
+    `tour_summary` , `detail_html`
   </sql>
 
   <insert id="insert" parameterType="com.keendo.biz.model.TourProduct" >
     insert into e_tour_product
-    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`,`poster_url`,`top_poster_url`)
+    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`,`poster_url`,`top_poster_url`,`detail_html`)
     values
-    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state},#{posterUrl},#{topPosterUrl})
+    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state},#{posterUrl},#{topPosterUrl},#{detailHtml})
   </insert>
 
 
@@ -83,7 +84,8 @@
       price = #{price},
       max_participant_num = #{maxParticipantNum},
       wx_pub_url = #{wxPubUrl},
-      state = #{state}
+      state = #{state},
+      detail_html = #{detailHtml}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

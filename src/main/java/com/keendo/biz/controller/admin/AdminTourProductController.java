@@ -96,11 +96,6 @@ public class AdminTourProductController {
             return RespHelper.failed("行程概要不能为空");
         }
 
-        String wxPubUrl = addTourProduct.getWxPubUrl();
-        if(StringUtil.isEmpty(wxPubUrl)){
-            return RespHelper.failed("文章链接不能为空");
-        }
-
         String coverImgUrl = addTourProduct.getCoverImgUrl();
         if(StringUtil.isEmpty(coverImgUrl)){
             return RespHelper.failed("产品封面图不能为空");
@@ -160,11 +155,6 @@ public class AdminTourProductController {
         String tourSummary = tourProduct.getTourSummary();
         if(StringUtil.isEmpty(tourSummary)){
             return RespHelper.failed("行程概要不能为空");
-        }
-
-        String wxPubUrl = tourProduct.getWxPubUrl();
-        if(StringUtil.isEmpty(wxPubUrl)){
-            return RespHelper.failed("文章链接不能为空");
         }
 
         String coverImgUrl = tourProduct.getCoverImgUrl();

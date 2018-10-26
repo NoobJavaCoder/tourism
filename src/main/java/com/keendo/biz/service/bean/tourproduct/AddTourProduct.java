@@ -16,7 +16,15 @@ public class AddTourProduct {
     private Date deadline;
     private Integer maxParticipantNum;
     private String wxPubUrl;
+    private String detailHtml;
 
+    public String getDetailHtml() {
+        return detailHtml;
+    }
+
+    public void setDetailHtml(String detailHtml) {
+        this.detailHtml = detailHtml;
+    }
 
     public String getTopPosterUrl() {
         return topPosterUrl;
