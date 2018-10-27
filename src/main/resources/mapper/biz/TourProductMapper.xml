@@ -18,6 +18,8 @@
   </resultMap>
 
 
+
+
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.keendo.biz.model.TourProduct">
     <result column="tour_summary" jdbcType="LONGVARCHAR" property="tourSummary" />
     <result column="detail_html" jdbcType="LONGVARCHAR" property="detailHtml" />
@@ -68,6 +70,52 @@
     count(id)
     from e_tour_product
   </select>
+
+  <update id="updateSelective" parameterType="com.keendo.biz.model.TourProduct">
+    update e_tour_product
+    <set>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="coverImgUrl != null">
+        cover_img_url = #{coverImgUrl},
+      </if>
+      <if test="posterUrl != null">
+        poster_url = #{posterUrl},
+      </if>
+      <if test="topPosterUrl != null">
+        top_poster_url = #{topPosterUrl},
+      </if>
+      <if test="departureTime != null">
+        departure_time = #{departureTime},
+      </if>
+      <if test="deadline != null">
+        deadline = #{deadline},
+      </if>
+      <if test="tourDay != null">
+        tour_day = #{tourDay},
+      </if>
+      <if test="price != null">
+        price = #{price},
+      </if>
+      <if test="maxParticipantNum != null">
+        max_participant_num = #{maxParticipantNum},
+      </if>
+      <if test="wxPubUrl != null">
+        wx_pub_url = #{wxPubUrl},
+      </if>
+      <if test="state != null">
+        state = #{state},
+      </if>
+      <if test="tourSummary != null">
+        tour_summary = #{tourSummary},
+      </if>
+      <if test="detailHtml != null">
+        detail_html = #{detailHtml},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 
 
   <update id="updateByPrimaryKey" parameterType="com.keendo.biz.model.TourProduct" >

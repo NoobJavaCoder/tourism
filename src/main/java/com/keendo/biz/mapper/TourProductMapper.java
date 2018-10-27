@@ -17,6 +17,8 @@ public interface TourProductMapper {
 
     int updateByPrimaryKey(TourProduct record);
 
+    int updateSelective(TourProduct tourProduct);
+
     int deleteById(Integer id);
 
     int updateStateById(@Param("state") Integer state, @Param("id") Integer id);

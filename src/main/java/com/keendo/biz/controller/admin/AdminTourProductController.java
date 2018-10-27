@@ -88,7 +88,7 @@ public class AdminTourProductController {
 
         Integer tourDay = addTourProduct.getTourDay();
         if(tourDay == null || tourDay <= 0){
-            return RespHelper.failed("旅行时间填写有误");
+            return RespHelper.failed("旅行天数填写有误");
         }
 
         String tourSummary = addTourProduct.getTourSummary();
@@ -119,17 +119,15 @@ public class AdminTourProductController {
     @ResponseBody
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public RespBase update(@RequestBody TourProduct tourProduct) {
-        Date now = new Date();
-
         Date departureTime = tourProduct.getDepartureTime();
-        if(departureTime == null || now.compareTo(departureTime) >= 0){
-            return RespHelper.failed("旅行出发时间填写有误");
+        if(departureTime == null ){
+            throw new BizException("旅行出发时间填写有误");
         }
 
         //报名截止日期应该在启程时间之前
         Date deadline = tourProduct.getDeadline();
-        if(deadline == null || now.compareTo(deadline) >= 0 || deadline.compareTo(departureTime) >= 0){
-            return RespHelper.failed("报名截止日期填写有误");
+        if(deadline == null  || deadline.compareTo(departureTime) >= 0){
+            throw new BizException("报名截止日期填写有误");
         }
 
         Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
@@ -149,7 +147,7 @@ public class AdminTourProductController {
 
         Integer tourDay = tourProduct.getTourDay();
         if(tourDay == null || tourDay <= 0){
-            return RespHelper.failed("旅行时间填写有误");
+            return RespHelper.failed("旅行天数填写有误");
         }
 
         String tourSummary = tourProduct.getTourSummary();
