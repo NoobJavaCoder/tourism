@@ -18,8 +18,11 @@
   </resultMap>
 
 
+
+
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.keendo.biz.model.TourProduct">
     <result column="tour_summary" jdbcType="LONGVARCHAR" property="tourSummary" />
+    <result column="detail_html" jdbcType="LONGVARCHAR" property="detailHtml" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -27,14 +30,14 @@
   </sql>
 
   <sql id="Blob_Column_List">
-    `tour_summary`
+    `tour_summary` , `detail_html`
   </sql>
 
   <insert id="insert" parameterType="com.keendo.biz.model.TourProduct" >
     insert into e_tour_product
-    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`,`poster_url`,`top_poster_url`)
+    (`title`, `cover_img_url`, `departure_time`, `deadline`, `tour_day`, `price`, `max_participant_num` , `wx_pub_url`,`create_time`,`tour_summary`,`state`,`poster_url`,`top_poster_url`,`detail_html`)
     values
-    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state},#{posterUrl},#{topPosterUrl})
+    ( #{title},#{coverImgUrl},#{departureTime},#{deadline},#{tourDay},IFNULL(#{price},0),#{maxParticipantNum},#{wxPubUrl},#{createTime},#{tourSummary},#{state},#{posterUrl},#{topPosterUrl},#{detailHtml})
   </insert>
 
 
@@ -54,7 +57,7 @@
     select
     <include refid="Base_Column_List" /> , <include refid="Blob_Column_List"/>
     from e_tour_product where state != #{state}
-    order by state ASC , create_time DESC
+    order by state ASC , deadline ASC
     limit #{startIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
   </select>
 
@@ -67,6 +70,52 @@
     count(id)
     from e_tour_product
   </select>
+
+  <update id="updateSelective" parameterType="com.keendo.biz.model.TourProduct">
+    update e_tour_product
+    <set>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="coverImgUrl != null">
+        cover_img_url = #{coverImgUrl},
+      </if>
+      <if test="posterUrl != null">
+        poster_url = #{posterUrl},
+      </if>
+      <if test="topPosterUrl != null">
+        top_poster_url = #{topPosterUrl},
+      </if>
+      <if test="departureTime != null">
+        departure_time = #{departureTime},
+      </if>
+      <if test="deadline != null">
+        deadline = #{deadline},
+      </if>
+      <if test="tourDay != null">
+        tour_day = #{tourDay},
+      </if>
+      <if test="price != null">
+        price = #{price},
+      </if>
+      <if test="maxParticipantNum != null">
+        max_participant_num = #{maxParticipantNum},
+      </if>
+      <if test="wxPubUrl != null">
+        wx_pub_url = #{wxPubUrl},
+      </if>
+      <if test="state != null">
+        state = #{state},
+      </if>
+      <if test="tourSummary != null">
+        tour_summary = #{tourSummary},
+      </if>
+      <if test="detailHtml != null">
+        detail_html = #{detailHtml},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 
 
   <update id="updateByPrimaryKey" parameterType="com.keendo.biz.model.TourProduct" >
@@ -83,7 +132,8 @@
       price = #{price},
       max_participant_num = #{maxParticipantNum},
       wx_pub_url = #{wxPubUrl},
-      state = #{state}
+      state = #{state},
+      detail_html = #{detailHtml}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -92,9 +142,6 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   
-  <select id="selectByState" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> from e_tour_product where state = #{state}
-  </select>
 
   <update id="updateStateById">
     update e_tour_product set state = #{state} where id = #{id}
@@ -105,6 +152,6 @@
   </update>
   
   <select id="selectByLTState" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> from e_tour_product where state &lt; #{state}
+    select <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> from e_tour_product where state &lt; #{state}
   </select>
 </mapper>

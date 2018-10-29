@@ -18,6 +18,15 @@ public class TourProduct {
     private String wxPubUrl;
     private Date createTime;
     private Integer state;
+    private String detailHtml;
+
+    public String getDetailHtml() {
+        return detailHtml;
+    }
+
+    public void setDetailHtml(String detailHtml) {
+        this.detailHtml = detailHtml;
+    }
 
     public String getTopPosterUrl() {
         return topPosterUrl;

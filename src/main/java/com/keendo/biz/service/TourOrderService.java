@@ -705,6 +705,10 @@ public class TourOrderService {
             Integer state = tourOrder.getState();
             myOrderItem.setTourOrderState(state);
 
+            //订单创建时间
+            Date createTime = tourOrder.getCreateTime();
+            myOrderItem.setCreateTime(createTime);
+
             myOrderItemList.add(myOrderItem);
 
         }
@@ -724,4 +728,5 @@ public class TourOrderService {
 
         private final static Integer ORDER_SN_LENGTH = 32;//系统订单号位数
     }
+
 }

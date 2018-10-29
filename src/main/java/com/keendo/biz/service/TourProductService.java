@@ -1,5 +1,6 @@
 package com.keendo.biz.service;
 
+import com.keendo.architecture.controller.RespHelper;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.mapper.TourProductMapper;
 import com.keendo.biz.model.TourOrder;
@@ -10,8 +11,6 @@ import com.keendo.biz.service.utils.ListUtil;
 import com.keendo.biz.service.utils.TimeUtils;
 import com.keendo.user.model.User;
 import com.keendo.user.service.UserService;
-import com.keendo.user.service.utils.BeanUtil;
-import com.keendo.wxpay.utils.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +54,7 @@ public class TourProductService {
         List<String> headImgList = new ArrayList<>();
         if (ListUtil.isNotEmpty(orderedUserIdList)) {
             for (Integer participantId : orderedUserIdList) {
-                User participant = userService.getById(userId);
+                User participant = userService.getById(participantId);
                 if (participant != null) {
                     String headImg = participant.getHeadImgUrl();
                     headImgList.add(headImg);
@@ -70,7 +69,11 @@ public class TourProductService {
             for(TourOrder tourOrder : tourOrderList){
                 Integer tourOrderState = tourOrder.getState();
                 if(tourOrderState.equals(TourOrderService.Constants.HAS_PAY_STATE )|| tourOrderState.equals(TourOrderService.Constants.NOT_PAY_STATE ) ){
+                    //订单状态
                     tourProductItemDetail.setOrderState(tourOrderState);
+                    //订单id
+                    Integer orderId = tourOrder.getId();
+                    tourProductItemDetail.setOrderId(orderId);
                 }
             }
         }
@@ -213,23 +216,23 @@ public class TourProductService {
     /**
      * 定时修改产品状态为旅行结束状态
      */
-    public void reviseEndState(){
+    public void reviseEndState() {
         List<TourProduct> tourProducts = tourProductMapper.selectByLTState(Constants.FINISH_STATE);
 
-        if(ListUtil.isEmpty(tourProducts)) return;
+        if (ListUtil.isEmpty(tourProducts)) return;
 
         Iterator<TourProduct> iterator = tourProducts.iterator();
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             TourProduct tourProduct = iterator.next();
 
             Date departureTime = TimeUtils.dateStartTime(tourProduct.getDepartureTime());
 
-            Date finishTime = TimeUtils.dateOffset(departureTime,tourProduct.getTourDay());
+            Date finishTime = TimeUtils.dateOffset(departureTime, tourProduct.getTourDay());
 
             Date nowTime = new Date();
 
-            if(nowTime.compareTo(finishTime) > 0){
+            if (nowTime.compareTo(finishTime) > 0) {
 
                 tourProduct.setState(Constants.FINISH_STATE);
 
@@ -241,21 +244,21 @@ public class TourProductService {
     /**
      * 定时修改产品状态为报名已截止状态
      */
-    public void reviseDeadlineState(){
+    public void reviseDeadlineState() {
         List<TourProduct> tourProducts = tourProductMapper.selectByLTState(Constants.DEADLINE_STATE);
 
-        if(ListUtil.isEmpty(tourProducts)) return;
+        if (ListUtil.isEmpty(tourProducts)) return;
 
         Iterator<TourProduct> iterator = tourProducts.iterator();
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             TourProduct tourProduct = iterator.next();
 
             Date deadline = TimeUtils.dateEndTime(tourProduct.getDeadline());
 
             Date nowTime = new Date();
 
-            if(nowTime.compareTo(deadline) > 0){
+            if (nowTime.compareTo(deadline) > 0) {
 
                 tourProduct.setState(Constants.DEADLINE_STATE);
 
@@ -263,6 +266,7 @@ public class TourProductService {
             }
         }
     }
+
 
 
 
@@ -279,6 +283,10 @@ public class TourProductService {
         return tourProductMapper.updateByPrimaryKey(tourProduct);
     }
 
+    public Integer updateSelective(TourProduct tourProduct) {
+        return tourProductMapper.updateSelective(tourProduct);
+    }
+
     public Integer deleteById(Integer id) {
         return tourProductMapper.deleteById(id);
     }
@@ -287,14 +295,6 @@ public class TourProductService {
         return tourProductMapper.insert(tourProduct);
     }
 
-    /**
-     * 获取所有正在进行中状态的产品List
-     *
-     * @return
-     */
-    public List<TourProduct> getOnGoingStateList() {
-        return tourProductMapper.selectByState(Constants.ON_GOING_STATE);
-    }
 
     /**
      * 更新旅游产品的状态
@@ -317,10 +317,11 @@ public class TourProductService {
 
     /**
      * 修改为不满员状态
+     *
      * @param id
      * @return
      */
-    public Integer notFullState(Integer id){
+    public Integer notFullState(Integer id) {
         return this.updateStateByIdAndFromState(id, Constants.FULL_STATE, Constants.ON_GOING_STATE);
     }
 

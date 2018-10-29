@@ -13,6 +13,33 @@ public class TourProductItemDetail {
     private Integer state;
     private String title;
     private Integer orderState;
+    private Integer orderId;
+    private String coverImgUrl;
+    private String detailHtml;
+
+    public String getDetailHtml() {
+        return detailHtml;
+    }
+
+    public void setDetailHtml(String detailHtml) {
+        this.detailHtml = detailHtml;
+    }
+
+    public String getCoverImgUrl() {
+        return coverImgUrl;
+    }
+
+    public void setCoverImgUrl(String coverImgUrl) {
+        this.coverImgUrl = coverImgUrl;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
     public Integer getOrderState() {
         return orderState;

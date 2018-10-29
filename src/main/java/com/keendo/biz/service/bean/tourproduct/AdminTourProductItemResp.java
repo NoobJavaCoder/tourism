@@ -23,6 +23,15 @@ public class AdminTourProductItemResp {
     private Integer maxParticipantNum;//人数上限
     private Date createTime;
     private Integer state;
+    private String detailHtml;
+
+    public String getDetailHtml() {
+        return detailHtml;
+    }
+
+    public void setDetailHtml(String detailHtml) {
+        this.detailHtml = detailHtml;
+    }
 
     public String getTopPosterUrl() {
         return topPosterUrl;
