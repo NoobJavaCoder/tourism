@@ -285,6 +285,10 @@ public class TourProductService {
         return tourProductMapper.updateByPrimaryKey(tourProduct);
     }
 
+    public Integer updateSelective(TourProduct tourProduct) {
+        return tourProductMapper.updateSelective(tourProduct);
+    }
+
     public Integer deleteById(Integer id) {
         return tourProductMapper.deleteById(id);
     }
