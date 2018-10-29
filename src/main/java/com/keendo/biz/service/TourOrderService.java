@@ -459,6 +459,49 @@ public class TourOrderService {
         return tourOrderMapper.updateState(orderId, fromState, toState);
     }
 
+    /**
+     * 订单退款
+     * @param tourOrderId
+     * @param userId
+     * @return
+     */
+    public void returnOrder(Integer tourOrderId ,Integer userId){
+
+        transactionTemplate.execute(status -> {
+
+            TourOrder tourOrder = getById(tourOrderId);
+            Integer tourProductId = tourOrder.getTourProductId();
+
+            TourProduct tourProduct = tourProductService.getById(tourProductId);
+
+            //检查是否满员
+            Integer hasPaidCount = countHasPaidByTourProductId(tourProductId);
+            Integer unPaidCount = countUnPaidByTourProductId(tourProductId);
+
+            Integer orderCount = hasPaidCount + unPaidCount;
+            Integer maxParticipantNum = tourProduct.getMaxParticipantNum();
+
+            //如果满员则修改产品状态
+            if (maxParticipantNum.equals(orderCount)) {
+                Integer fullStateResult = tourProductService.fullState(tourProductId);
+
+                if (fullStateResult.equals(0)) {
+                    throw new BizException("产品状态有误");
+                }
+            }
+
+            Integer updateResult = updateByFromState(tourOrderId, Constants.HAS_PAY_STATE, Constants.HAS_RETURN_STATE);
+
+            if(updateResult == 0){
+                throw new BizException("订单状态有误");
+            }
+
+            orderOptService.add(tourOrderId, Constants.HAS_PAY_STATE, Constants.HAS_RETURN_STATE, userId);
+
+            return null;
+        });
+    }
+
 
     /**
      * 取消订单
@@ -484,13 +527,6 @@ public class TourOrderService {
 
         transactionTemplate.execute(status -> {
 
-            Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.USER_CANCEL_STATE);
-            if (updateResult == 0) {
-                throw new BizException("取消订单失败");
-            }
-
-            orderOptService.add(orderId, Constants.NOT_PAY_STATE, Constants.USER_CANCEL_STATE, userId);
-
             Integer tourProductId = tourOrder.getTourProductId();
 
             TourProduct tourProduct = tourProductService.getById(tourProductId);
@@ -503,6 +539,13 @@ public class TourOrderService {
                     throw new BizException("产品状态有误");
                 }
             }
+
+            Integer updateResult = tourOrderMapper.updateState(orderId, Constants.NOT_PAY_STATE, Constants.USER_CANCEL_STATE);
+            if (updateResult == 0) {
+                throw new BizException("取消订单失败");
+            }
+
+            orderOptService.add(orderId, Constants.NOT_PAY_STATE, Constants.USER_CANCEL_STATE, userId);
 
             return updateResult;
         });
