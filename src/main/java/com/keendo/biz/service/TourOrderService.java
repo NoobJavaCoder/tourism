@@ -483,7 +483,7 @@ public class TourOrderService {
 
             //如果满员则修改产品状态
             if (maxParticipantNum.equals(orderCount)) {
-                Integer fullStateResult = tourProductService.fullState(tourProductId);
+                Integer fullStateResult = tourProductService.notFullState(tourProductId);
 
                 if (fullStateResult.equals(0)) {
                     throw new BizException("产品状态有误");
