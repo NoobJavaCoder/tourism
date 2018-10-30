@@ -23,7 +23,7 @@ public interface TourProductMapper {
 
     int updateStateById(@Param("state") Integer state, @Param("id") Integer id);
 
-    int updateStateByIdAndFromState(@Param("fromState") Integer fromState, @Param("id") Integer id, @Param("toState") Integer state);
+    int updateStateByIdAndFromState(@Param("id") Integer id, @Param("fromState") Integer fromState,  @Param("toState") Integer state);
 
     /**
      * 未下架产品列表分页
