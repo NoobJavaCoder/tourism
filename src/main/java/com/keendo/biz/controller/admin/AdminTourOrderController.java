@@ -4,6 +4,7 @@ import com.keendo.architecture.controller.RespBase;
 import com.keendo.architecture.controller.RespHelper;
 import com.keendo.architecture.exception.BizException;
 import com.keendo.biz.controller.admin.bean.order.TourOrderPageReq;
+import com.keendo.biz.controller.admin.utils.AdminLoginUtils;
 import com.keendo.biz.controller.base.bean.IdReq;
 import com.keendo.biz.service.TourOrderService;
 import com.keendo.biz.service.bean.order.AdminProductOrderItemResp;
@@ -37,6 +38,20 @@ public class AdminTourOrderController {
         return RespHelper.ok(productOrderItemRespList ,count);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/return", method = RequestMethod.POST)
+    public RespBase reurnOrder(@RequestBody IdReq idReq){
 
+        Integer userId = AdminLoginUtils.getAdminUserId();
+
+
+        if(userId == null){
+            return RespHelper.nologin();
+        }
+
+        tourOrderService.returnOrder(idReq.getId(),userId);
+
+        return RespHelper.ok();
+    }
 
 }

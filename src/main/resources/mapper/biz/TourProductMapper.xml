@@ -148,7 +148,7 @@
   </update>
 
   <update id="updateStateByIdAndFromState" parameterType="map" >
-    update e_tour_product set state = #{fromState} where id = #{id} and state = #{toState}
+    update e_tour_product set state = #{toState} where id = #{id} and state = #{fromState}
   </update>
   
   <select id="selectByLTState" resultMap="BaseResultMap">
