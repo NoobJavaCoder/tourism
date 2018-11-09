@@ -19,6 +19,7 @@ public class AdminGlobalConfigController {
     @Autowired
     private CfgService cfgService;
 
+
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespBase list(){
