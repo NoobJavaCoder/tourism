@@ -54,21 +54,23 @@ public class MiniAppUserinfoService {
         String openId = userBaseInfo.getOpenId();
         User record = userService.getByOpenId(openId);
 
+        Integer userId;
+
         if (record == null) {
             //save
             User user = BeanUtil.copyBean(userBaseInfo, User.class);
             user.setCreateTime(new Date());
-            Integer userid = userService.save(user);
-            record.setId(userid);
+            userId = userService.save(user);
 
         } else {
             //update
             BeanUtil.copyProperties(userBaseInfo, record);
             userService.update(record);
+            userId = record.getId();
         }
 
         //set seesion
-        cacheSessionService.setUserId(token, record.getId());
+        cacheSessionService.setUserId(token, userId);
 
         return token;
     }
